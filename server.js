@@ -1,0 +1,304 @@
+
+const express = require('express');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const crypto = require('crypto');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config();
+const aws = require('aws-sdk');
+const _ = require('lodash');
+const { PDFDocument } = require('pdf-lib');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(bodyParser.json());
+
+// Configure nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'lawgical.immigration@gmail.com',
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+
+
+aws.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION
+});
+
+const textract = new aws.Textract();
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${req.body.id}-${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+const upload = multer({ storage: storage });
+// In-memory store for email addresses
+const emailStore = [];
+app.post('/send-email', (req, res) => {
+    const { name, email } = req.body;
+    emailStore.push(email);
+    console.log(emailStore)
+    
+    const uniqueId = crypto.randomBytes(16).toString('hex');
+    const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
+     // Store email with the unique ID
+    
+    const mailOptions = {
+        from: 'lawgical.immigration@gmail.com',
+        to: email,
+        subject: '🎉 Congratulations! Let’s Get Started on Your Visa Application!',
+        text: `Hello ${name},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return res.status(500).send(error.toString());
+        }
+        res.status(200).send('Email sent: ' + info.response);
+    });
+});
+
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+    
+     // Retrieve the email using the unique ID
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
+    
+    const email = emailStore[0]
+    try {
+        const filePath = req.file.path;
+        const fileContent = fs.readFileSync(filePath);
+        const extractedData = await processPassport(fileContent);
+        const outputFilePath = path.join('output', `${path.basename(filePath, path.extname(filePath))}.json`);
+
+        // Ensure output directory exists
+        if (!fs.existsSync('output')) {
+            fs.mkdirSync('output');
+        }
+
+        fs.writeFileSync(outputFilePath, JSON.stringify(extractedData, null, 2), 'utf8');
+        console.log(`Extracted data saved to ${outputFilePath}`);
+
+        // Fill the PDF form with the extracted data
+        const filledPdfPath = 'output/filled_form.pdf';
+        await fillPdfForm('Xfa_i-129-unlocked.pdf', filledPdfPath, extractedData, fieldMapping);
+
+        // Send the filled PDF via email
+        const mailOptions = {
+            from: 'lawgical.immigration@gmail.com',
+            to: email, // Replace with recipient email
+            subject: '📋 Action Required: Jessica`s Completed Visa Form is Ready for Review',
+            text: 'Hello Jessica,\nExciting news! The first version of visa form is ready for your review. 📋\nPlease review and finalize the details.\nYour expertise is crucial to ensure everything is accurate and complete. If you need any further information or assistance, simply respond to this email.\nBest,\nTeam Lawgical',
+            attachments: [
+                {
+                    filename: 'filled_I129_form.pdf',
+                    path: filledPdfPath
+                }
+            ]
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return res.status(500).send(error.toString());
+            }
+            res.status(200).send('File uploaded, processed, and email sent: ' + info.response);
+        });
+
+    } catch (error) {
+        console.error(`Error processing file: ${error}`);
+        res.status(500).send('Error processing file.');
+    }
+});
+
+const getText = (result, blocksMap) => {
+    let text = '';
+    if (_.has(result, 'Relationships')) {
+        result.Relationships.forEach(relationship => {
+            if (relationship.Type === 'CHILD') {
+                relationship.Ids.forEach(childId => {
+                    const word = blocksMap[childId];
+                    if (word.BlockType === 'WORD') {
+                        text += `${word.Text} `;
+                    }
+                    if (word.BlockType === 'SELECTION_ELEMENT' && word.SelectionStatus === 'SELECTED') {
+                        text += 'X';
+                    }
+                });
+            }
+        });
+    }
+    return text.trim();
+};
+
+const correctOcrErrors = (text) => {
+    return text.replace(/([A-Z]) 1/g, '$1');
+};
+
+const correctOcrErrors1 = (text) => {
+    return text.replace(/.*\/\s*/, '');
+};
+
+const findValueBlock = (keyBlock, valueMap) => {
+    let valueBlock;
+    keyBlock.Relationships.forEach(relationship => {
+        if (relationship.Type === 'VALUE') {
+            relationship.Ids.every(valueId => {
+                if (_.has(valueMap, valueId)) {
+                    valueBlock = valueMap[valueId];
+                    return false;
+                }
+            });
+        }
+    });
+    return valueBlock;
+};
+
+const getKeyValueRelationship = (keyMap, valueMap, blockMap) => {
+    const keyValues = {};
+    const keyMapValues = _.values(keyMap);
+    keyMapValues.forEach(keyMapValue => {
+        const valueBlock = findValueBlock(keyMapValue, valueMap);
+        let key = getText(keyMapValue, blockMap);
+        let value = getText(valueBlock, blockMap);
+        key = correctOcrErrors1(key);
+        value = correctOcrErrors(value);
+        keyValues[key] = value;
+    });
+    return keyValues;
+};
+
+const getKeyValueMap = blocks => {
+    const keyMap = {};
+    const valueMap = {};
+    const blockMap = {};
+    let blockId;
+    blocks.forEach(block => {
+        blockId = block.Id;
+        blockMap[blockId] = block;
+        if (block.BlockType === 'KEY_VALUE_SET') {
+            if (_.includes(block.EntityTypes, 'KEY')) {
+                keyMap[blockId] = block;
+            } else {
+                valueMap[blockId] = block;
+            }
+        }
+    });
+    return { keyMap, valueMap, blockMap };
+};
+
+const processPassport = async buffer => {
+    const params = {
+        Document: {
+            Bytes: buffer
+        },
+        FeatureTypes: ['FORMS']
+    };
+    const request = textract.analyzeDocument(params);
+    const data = await request.promise();
+    if (data && data.Blocks) {
+        const { keyMap, valueMap, blockMap } = getKeyValueMap(data.Blocks);
+        const keyValues = getKeyValueRelationship(keyMap, valueMap, blockMap);
+        return keyValues;
+    }
+    return undefined;
+};
+
+const fillPdfForm = async (inputPdfPath, outputPdfPath, formData, fieldMapping) => {
+    const existingPdfBytes = fs.readFileSync(inputPdfPath);
+    const pdfDoc = await PDFDocument.load(existingPdfBytes);
+    const form = pdfDoc.getForm();
+    Object.keys(formData).forEach(key => {
+        const fieldName = fieldMapping[key];
+        if (fieldName) {
+            const field = form.getTextField(fieldName);
+            if (field) {
+                field.setText(formData[key]);
+            } else {
+                console.warn(`Field "${fieldName}" not found in the PDF form`);
+            }
+        } else {
+            console.warn(`No mapping found for key "${key}"`);
+        }
+    });
+    const pdfBytes = await pdfDoc.save();
+    fs.writeFileSync(outputPdfPath, pdfBytes);
+};
+
+const fieldMapping = {
+  "Given Name(s)": "form1[0].#subform[0].Line1_GivenName[0]",
+  "Surname": "form1[0].#subform[0].Line1_FamilyName[0]"
+};
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
+
+// --------------------------------------Gusto Implementation --------------------------------------------------
+// const express = require('express');
+// const axios = require('axios');
+// const cors = require('cors');
+// require('dotenv').config();
+
+// const app = express();
+// const PORT = process.env.PORT || 8000;
+
+// // Store your access token and company UUID
+// const ACCESS_TOKEN = '2K0JR-d3lSvWm3DvHKL5jY1qAlZjW8btE4tvrVtSO_4'; // Replace with your actual access token
+// const COMPANY_UUID = '689e95c7-ce43-49fe-8149-5be705615e76'; // Replace with your actual company UUID
+// const COMPANY_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}`;
+// const EMPLOYEES_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}/employees`;
+
+// app.use(cors());
+
+// // Endpoint to fetch company details
+// app.get('/company', async (req, res) => {
+//     try {
+//         const response = await axios.get(COMPANY_URL, {
+//             headers: {
+//                 'Authorization': `Bearer ${ACCESS_TOKEN}`
+//             }
+//         });
+//         res.json(response.data);
+//     } catch (error) {
+//         console.error('Error fetching company details:', error.response ? error.response.data : error.message);
+//         res.status(error.response ? error.response.status : 500).send('Failed to fetch company details');
+//     }
+// });
+
+// // Endpoint to fetch employee details
+// app.get('/employees', async (req, res) => {
+    
+//     try {
+//         const response = await axios.get(EMPLOYEES_URL, {
+//             headers: {
+//                 'Authorization': `Bearer ${ACCESS_TOKEN}`
+//             }
+//         });
+        
+//         res.json(response.data);
+//     } catch (error) {
+//         console.error('Error fetching employees:', error.response ? error.response.data : error.message);
+//         res.status(error.response ? error.response.status : 500).send('Failed to fetch employees');
+//     }
+// });
+
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
+//----------------------------------------------------------------------------------------------------------------

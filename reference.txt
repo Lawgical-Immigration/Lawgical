@@ -1,0 +1,615 @@
+// const express = require('express');
+// const nodemailer = require('nodemailer');
+// const bodyParser = require('body-parser');
+// const cors = require('cors');
+// const crypto = require('crypto'); 
+// const multer = require('multer');
+// const path = require('path');
+// const fs = require('fs');
+// require('dotenv').config();
+// const aws = require('aws-sdk');
+// const _ = require('lodash');
+// const { TextractClient, AnalyzeDocumentCommand } = require('@aws-sdk/client-textract');
+// const app = express();
+// const { PDFDocument } = require('pdf-lib');
+// const PORT = process.env.PORT || 5000;
+
+// app.use(cors());
+// app.use(bodyParser.json());
+
+// // Configure nodemailer
+// const transporter = nodemailer.createTransport({
+//     service: 'gmail', 
+//     auth: {
+//         user: 'lawgical.immigration@gmail.com', 
+//         pass: process.env.EMAIL_PASSWORD
+//     }
+// });
+
+
+// aws.config.update({
+//     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+//     region: process.env.AWS_REGION
+//   });
+  
+//   const textract = new aws.Textract();
+// // const textract = new AWS.Textract();
+
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'uploads/');
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, `${req.body.id}-${Date.now()}${path.extname(file.originalname)}`);
+//     }
+// });
+// const upload = multer({ storage: storage });
+
+// app.post('/send-email', (req, res) => {
+//     const { name, email } = req.body;
+
+//     const uniqueId = crypto.randomBytes(16).toString('hex');
+//     const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
+
+//     const mailOptions = {
+//         from: 'lawgical.immigration@gmail.com',
+//         to: email,
+//         subject: 'Immigration Process Started',
+//         text: `Hello ${name},\n\nYour immigration process has been started. Please upload your documents using the following link:\n\n${uploadLink}\n\nBest regards,\nYour Company`
+//     };
+
+//     transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//             return res.status(500).send(error.toString());
+//         }
+//         res.status(200).send('Email sent: ' + info.response);
+//     });
+// });
+
+// // app.post('/upload', upload.single('file'), async (req, res) => {
+// //     if (!req.file) {
+// //         return res.status(400).send('No file uploaded.');
+// //     }
+
+// //     const filePath = req.file.path;
+
+// //     try {
+// //         // const extractedText = await processPassport(filePath);
+// //         res.status(200).send({ message: 'File uploaded and processed successfully.' });
+// //     } catch (error) {
+// //         res.status(500).send('Error processing file: ' + error.toString());
+// //     }
+// // });
+// app.post('/upload', upload.single('file'), async (req, res) => {
+//     if (!req.file) {
+//       return res.status(400).send('No file uploaded.');
+//     }
+  
+//     try {
+//       const filePath = req.file.path;
+//       const fileContent = fs.readFileSync(filePath);
+//       const extractedData = await processPassport(fileContent);
+//       const outputFilePath = path.join('output', `${path.basename(filePath, path.extname(filePath))}.json`);
+  
+//       // Ensure output directory exists
+//       if (!fs.existsSync('output')) {
+//         fs.mkdirSync('output');
+//       }
+  
+//       fs.writeFileSync(outputFilePath, JSON.stringify(extractedData, null, 2), 'utf8');
+//       console.log(`Extracted data saved to ${outputFilePath}`);
+  
+//       res.status(200).send({ message: 'File uploaded and processed successfully.', data: extractedData });
+//     } catch (error) {
+//       console.error(`Error processing file: ${error}`);
+//       res.status(500).send('Error processing file.');
+//     }
+//   });
+// // Function to get text from the result and blocks map
+// const getText = (result, blocksMap) => {
+//     let text = '';
+  
+//     if (_.has(result, 'Relationships')) {
+//       result.Relationships.forEach(relationship => {
+//         if (relationship.Type === 'CHILD') {
+//           relationship.Ids.forEach(childId => {
+//             const word = blocksMap[childId];
+//             if (word.BlockType === 'WORD') {
+//               text += `${word.Text} `;
+//             }
+//             if (word.BlockType === 'SELECTION_ELEMENT') {
+//               if (word.SelectionStatus === 'SELECTED') {
+//                 text += 'X';
+//               }
+//             }
+//           });
+//         }
+//       });
+//     }
+  
+//     return text.trim();
+//   };
+  
+//   // Post-process text to correct common OCR errors
+//   const correctOcrErrors = (text) => {
+//     // Regular expression to remove any digit '1' that follows a letter
+//     return text.replace(/([A-Z]) 1/g, '$1');
+//   };
+//   const correctOcrErrors1 = (text) => {
+    
+//     return text.replace(/.*\/\s*/, '');
+    
+// };
+//   // Function to find value block
+//   const findValueBlock = (keyBlock, valueMap) => {
+//     let valueBlock;
+//     keyBlock.Relationships.forEach(relationship => {
+//       if (relationship.Type === 'VALUE') {
+//         relationship.Ids.every(valueId => {
+//           if (_.has(valueMap, valueId)) {
+//             valueBlock = valueMap[valueId];
+//             return false;
+//           }
+//         });
+//       }
+//     });
+  
+//     return valueBlock;
+//   };
+  
+//   // Function to get key-value relationship
+//   const getKeyValueRelationship = (keyMap, valueMap, blockMap) => {
+//     const keyValues = {};
+  
+//     const keyMapValues = _.values(keyMap);
+  
+//     keyMapValues.forEach(keyMapValue => {
+//       const valueBlock = findValueBlock(keyMapValue, valueMap);
+//       let key = getText(keyMapValue, blockMap);
+//       let value = getText(valueBlock, blockMap);
+      
+//       // Correct OCR errors in the extracted value
+//       key = correctOcrErrors1(key);
+//       value = correctOcrErrors(value);
+      
+//       keyValues[key] = value;
+//     });
+  
+//     return keyValues;
+//   };
+  
+//   // Function to get key-value map
+//   const getKeyValueMap = blocks => {
+//     const keyMap = {};
+//     const valueMap = {};
+//     const blockMap = {};
+  
+//     let blockId;
+//     blocks.forEach(block => {
+//       blockId = block.Id;
+//       blockMap[blockId] = block;
+  
+//       if (block.BlockType === 'KEY_VALUE_SET') {
+//         if (_.includes(block.EntityTypes, 'KEY')) {
+//           keyMap[blockId] = block;
+//         } else {
+//           valueMap[blockId] = block;
+//         }
+//       }
+//     });
+  
+//     return { keyMap, valueMap, blockMap };
+//   };
+  
+//   // Function to process a PDF with Amazon Textract using AWS SDK v3
+//   const processPassport = async buffer => {
+//     const params = {
+//       Document: {
+//         Bytes: buffer
+//       },
+//       FeatureTypes: ['FORMS']
+//     };
+  
+//     const request = textract.analyzeDocument(params);
+//     const data = await request.promise();
+  
+//     if (data && data.Blocks) {
+//       const { keyMap, valueMap, blockMap } = getKeyValueMap(data.Blocks);
+//       const keyValues = getKeyValueRelationship(keyMap, valueMap, blockMap);
+  
+//       return keyValues;
+//     }
+  
+//     // in case no blocks are found return undefined
+//     return undefined;
+//   };
+  
+//   // Function to process all PDFs in the uploads folder
+//   const processAllPDFs = async () => {
+//     const uploadsDir = path.join(__dirname, 'uploads');
+//     const outputDir = path.join(__dirname, 'output');
+  
+//     // Ensure output directory exists
+//     if (!fs.existsSync(outputDir)) {
+//       fs.mkdirSync(outputDir);
+//     }
+  
+//     fs.readdir(uploadsDir, async (err, files) => {
+//       if (err) {
+//         console.error('Error reading uploads directory:', err);
+//         return;
+//       }
+  
+//       for (const file of files) {
+//         const filePath = path.join(uploadsDir, file);
+//         if (path.extname(filePath).toLowerCase() === '.pdf') {
+//           console.log(`Found PDF file: ${filePath}`);
+//           try {
+//             const fileContent = fs.readFileSync(filePath);
+//             const extractedData = await processPassport(fileContent);
+//             const outputFilePath = path.join(outputDir, `${path.basename(file, path.extname(file))}.json`);
+//             fs.writeFileSync(outputFilePath, JSON.stringify(extractedData, null, 2), 'utf8');
+//             console.log(`Extracted data saved to ${outputFilePath}`);
+//           } catch (error) {
+//             console.error(`Error processing file ${filePath}: ${error}`);
+//           }
+//         }
+//       }
+//     });
+//   };
+  
+//   // Start processing all PDFs in the uploads folder
+//   processAllPDFs().then(() => {
+//     console.log('All files processed successfully!');
+//   }).catch((error) => {
+//     console.error('Error processing files:', error);
+//   });
+// // Read the JSON data (replace 'output/example.json' with your JSON file path)
+
+// const readJsonFile = (filePath) => {
+//   const rawData = fs.readFileSync(filePath);
+//   return JSON.parse(rawData);
+// };
+
+// // Path to your JSON file
+// const jsonFilePath = 'output/undefined-1717204015031.json';
+
+// // Read data from JSON file
+// const data = readJsonFile(jsonFilePath);
+
+// // Mapping JSON keys to PDF form field names
+// const fieldMapping = {
+// "Given Name(s)": "form1[0].#subform[0].Line1_GivenName[0]",
+// "Surname": "form1[0].#subform[0].Line1_FamilyName[0]"
+
+// };
+
+// // Function to fill PDF form fields
+// const fillPdfForm = async (inputPdfPath, outputPdfPath, formData, fieldMapping) => {
+// // Load the existing PDF document
+// const existingPdfBytes = fs.readFileSync(inputPdfPath);
+
+// // Load a PDF document
+// const pdfDoc = await PDFDocument.load(existingPdfBytes);
+
+// // Get the form from the PDF document
+// const form = pdfDoc.getForm();
+
+// // Loop through the mapping and fill the corresponding fields
+// Object.keys(formData).forEach(key => {
+//   const fieldName = fieldMapping[key];
+//   if (fieldName) {
+//     const field = form.getTextField(fieldName);
+//     if (field) {
+//       field.setText(formData[key]);
+//     } else {
+//       console.warn(`Field "${fieldName}" not found in the PDF form`);
+//     }
+//   } else {
+//     console.warn(`No mapping found for key "${key}"`);
+//   }
+// });
+
+// // Serialize the PDF document to bytes
+// const pdfBytes = await pdfDoc.save();
+
+// // Write the modified PDF to a new file
+// fs.writeFileSync(outputPdfPath, pdfBytes);
+// };
+
+// // Path to the input PDF form
+// const inputPdfPath = 'Xfa_i-129-unlocked.pdf';
+
+// // Path to the output PDF
+// const outputPdfPath = 'output/filled_I129_form.pdf';
+
+// // Fill the PDF form with the JSON data
+// fillPdfForm(inputPdfPath, outputPdfPath, data, fieldMapping)
+// .then(() => {
+//   console.log('PDF form filled successfully');
+// })
+// .catch(err => {
+//   console.error('Error filling PDF form:', err);
+// });
+
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
+
+// Function to process a PDF with Amazon Textract
+// async function processPassport(filePath) {
+//     try {
+//         console.log(`Processing file: ${filePath}`);
+
+//         // Read the PDF file
+//         const fileContent = fs.readFileSync(filePath);
+
+//         // Set up Textract parameters
+//         const params = {
+//             Document: {
+//                 Bytes: fileContent,
+//             },
+//             FeatureTypes: ['TABLES', 'FORMS'], // Optional: to extract tables and forms as well
+//         };
+
+//         // Call Amazon Textract to analyze the document
+//         const command = new AnalyzeDocumentCommand(params);
+//         const textractResult = await textractClient.send(command);
+
+//         // Extract text blocks from Textract result
+//         const textBlocks = textractResult.Blocks.filter(block => block.BlockType === 'LINE').map(block => block.Text);
+
+//         return textBlocks;
+//     } catch (err) {
+//         console.error('Error processing file:', err);
+//         throw err;
+//     }
+// }
+
+// // Function to process all PDFs in the uploads folder
+// async function processAllPDFs() {
+//     const uploadsDir = path.join(__dirname, 'uploads');
+//     const outputDir = path.join(__dirname, 'output');
+
+//     // Ensure output directory exists
+//     if (!fs.existsSync(outputDir)) {
+//         fs.mkdirSync(outputDir);
+//     }
+
+//     fs.readdir(uploadsDir, async (err, files) => {
+//         if (err) {
+//             console.error('Error reading uploads directory:', err);
+//             return;
+//         }
+
+//         for (const file of files) {
+//             const filePath = path.join(uploadsDir, file);
+//             if (path.extname(filePath).toLowerCase() === '.pdf') {
+//                 console.log(`Found PDF file: ${filePath}`);
+//                 try {
+//                     const extractedText = await processPassport(filePath);
+//                     const outputFilePath = path.join(outputDir, `${path.basename(file, path.extname(file))}.json`);
+//                     fs.writeFileSync(outputFilePath, JSON.stringify({ text: extractedText }, null, 2), 'utf8');
+//                     console.log(`Extracted text saved to ${outputFilePath}`);
+//                 } catch (error) {
+//                     console.error(`Error processing file ${filePath}: ${error}`);
+//                 }
+//             }
+//         }
+//     });
+// }
+
+// // Start processing all PDFs in the uploads folder
+// processAllPDFs().then(() => {
+//     console.log('All files processed successfully!');
+// }).catch((error) => {
+//     console.error('Error processing files:', error);
+// });
+
+// const {
+//     ServicePrincipalCredentials,
+//     PDFServices,
+//     MimeType,
+//     ExtractPDFParams,
+//     ExtractElementType,
+//     ExtractPDFJob,
+//     ExtractPDFResult,
+//     SDKError,
+//     ServiceUsageError,
+//     ServiceApiError
+// } = require('@adobe/pdfservices-node-sdk');
+// Function to process PDF with Adobe PDF Services
+// async function processPDF(filePath) {
+//     let readStream;
+//     try {
+//         // Initial setup, create credentials instance
+//         const credentials = new ServicePrincipalCredentials({
+//             clientId: process.env.PDF_SERVICES_CLIENT_ID,
+//             clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET
+//         });
+
+//         // Creates a PDF Services instance
+//         const pdfServices = new PDFServices({ credentials });
+
+//         // Creates an asset(s) from source file(s) and upload
+//         readStream = fs.createReadStream(filePath);
+//         const inputAsset = await pdfServices.upload({
+//             readStream,
+//             mimeType: MimeType.PDF
+//         });
+
+//         // Create parameters for the job
+//         const params = new ExtractPDFParams({
+//             elementsToExtract: [ExtractElementType.TEXT]
+//         });
+
+//         // Creates a new job instance
+//         const job = new ExtractPDFJob({ inputAsset, params });
+
+//         // Submit the job and get the job result
+//         const pollingURL = await pdfServices.submit({ job });
+//         const pdfServicesResponse = await pdfServices.getJobResult({
+//             pollingURL,
+//             resultType: ExtractPDFResult
+//         });
+
+//         // Get content from the resulting asset(s)
+//         const resultAsset = pdfServicesResponse.result.resource;
+//         const streamAsset = await pdfServices.getContent({ asset: resultAsset });
+
+//         // Creates a write stream and copy stream asset's content to it
+//         const outputFilePath = createOutputFilePath();
+//         console.log(`Saving asset at ${outputFilePath}`);
+
+//         const writeStream = fs.createWriteStream(outputFilePath);
+//         streamAsset.readStream.pipe(writeStream);
+//     } catch (err) {
+//         if (err instanceof SDKError || err instanceof ServiceUsageError || err instanceof ServiceApiError) {
+//             console.log("Exception encountered while executing operation", err);
+//         } else {
+//             console.log("Exception encountered while executing operation", err);
+//         }
+//     } finally {
+//         readStream?.destroy();
+//     }
+// }
+
+// // Generates a string containing a directory structure and file name for the output file
+// function createOutputFilePath() {
+//     const filePath = "output/";
+//     const date = new Date();
+//     const dateString = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+//         ("0" + date.getDate()).slice(-2) + "T" + ("0" + date.getHours()).slice(-2) + "-" +
+//         ("0" + date.getMinutes()).slice(-2) + "-" + ("0" + date.getSeconds()).slice(-2);
+//     fs.mkdirSync(filePath, { recursive: true });
+//     return (`${filePath}extract${dateString}.zip`);
+// }
+
+// // Function to process all PDFs in the uploads folder
+// async function processAllPDFs() {
+//     const uploadsDir = path.join(__dirname, 'uploads');
+//     fs.readdir(uploadsDir, async (err, files) => {
+//         if (err) {
+//             console.error('Error reading uploads directory:', err);
+//             return;
+//         }
+
+//         for (const file of files) {
+//             const filePath = path.join(uploadsDir, file);
+//             if (path.extname(filePath).toLowerCase() === '.pdf') {
+//                 console.log(`Processing file: ${filePath}`);
+//                 await processPDF(filePath);
+//             }
+//         }
+//     });
+// }
+
+// // Directly call the function to process all PDFs in the uploads folder
+// (async () => {
+//     try {
+//         await processAllPDFs();
+//         console.log('All files processed successfully!');
+//     } catch (error) {
+//         console.error('Error processing files:', error);
+//     }
+// })();
+
+
+
+
+
+// async function processPDF(filePath) {
+    //     let readStream;
+    //     try {
+    //         // Initial setup, create credentials instance
+    //         const credentials = new ServicePrincipalCredentials({
+    //             clientId: process.env.PDF_SERVICES_CLIENT_ID,
+    //             clientSecret: process.env.PDF_SERVICES_CLIENT_SECRET
+    //         });
+    
+    //         // Creates a PDF Services instance
+    //         const pdfServices = new PDFServices({ credentials });
+    
+    //         // Creates an asset(s) from source file(s) and upload
+    //         readStream = fs.createReadStream(filePath);
+    //         const inputAsset = await pdfServices.upload({
+    //             readStream,
+    //             mimeType: MimeType.PDF
+    //         });
+    
+    //         // Create parameters for the job
+    //         const params = new ExtractPDFParams({
+    //             elementsToExtract: [ExtractElementType.TEXT]
+    //         });
+    
+    //         // Creates a new job instance
+    //         const job = new ExtractPDFJob({ inputAsset, params });
+    
+    //         // Submit the job and get the job result
+    //         const pollingURL = await pdfServices.submit({ job });
+    //         const pdfServicesResponse = await pdfServices.getJobResult({
+    //             pollingURL,
+    //             resultType: ExtractPDFResult
+    //         });
+    
+    //         // Get content from the resulting asset(s)
+    //         const resultAsset = pdfServicesResponse.result.resource;
+    //         const streamAsset = await pdfServices.getContent({ asset: resultAsset });
+    
+    //         // Creates a write stream and copy stream asset's content to it
+    //         const outputFilePath = createOutputFilePath();
+    //         console.log(`Saving asset at ${outputFilePath}`);
+    
+    //         const writeStream = fs.createWriteStream(outputFilePath);
+    //         streamAsset.readStream.pipe(writeStream);
+    //     } catch (err) {
+    //         if (err instanceof SDKError || err instanceof ServiceUsageError || err instanceof ServiceApiError) {
+    //             console.log("Exception encountered while executing operation", err);
+    //         } else {
+    //             console.log("Exception encountered while executing operation", err);
+    //         }
+    //     } finally {
+    //         readStream?.destroy();
+    //     }
+    // }
+    
+    // // Generates a string containing a directory structure and file name for the output file
+    // function createOutputFilePath() {
+    //     const filePath = "output/";
+    //     const date = new Date();
+    //     const dateString = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" +
+    //         ("0" + date.getDate()).slice(-2) + "T" + ("0" + date.getHours()).slice(-2) + "-" +
+    //         ("0" + date.getMinutes()).slice(-2) + "-" + ("0" + date.getSeconds()).slice(-2);
+    //     fs.mkdirSync(filePath, { recursive: true });
+    //     return (`${filePath}extract${dateString}.zip`);
+    // }
+    
+    // // Function to process all PDFs in the uploads folder
+    // async function processAllPDFs() {
+    //     const uploadsDir = path.join(__dirname, 'uploads');
+    //     fs.readdir(uploadsDir, async (err, files) => {
+    //         if (err) {
+    //             console.error('Error reading uploads directory:', err);
+    //             return;
+    //         }
+    
+    //         for (const file of files) {
+    //             const filePath = path.join(uploadsDir, file);
+    //             if (path.extname(filePath).toLowerCase() === '.pdf') {
+    //                 console.log(`Processing file: ${filePath}`);
+    //                 await processPDF(filePath);
+    //             }
+    //         }
+    //     });
+    // }
+    
+    // // Directly call the function to process all PDFs in the uploads folder
+    // (async () => {
+    //     try {
+    //         await processAllPDFs();
+    //         console.log('All files processed successfully!');
+    //     } catch (error) {
+    //         console.error('Error processing files:', error);
+    //     }
+    // })();

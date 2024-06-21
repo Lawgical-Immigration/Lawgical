@@ -1,0 +1,32 @@
+{
+  "name": "lawgical",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "cd employee-details-frontend && npm install && npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@adobe/pdfservices-node-sdk": "^4.0.0",
+    "@aws-sdk/client-ses": "^3.587.0",
+    "@aws-sdk/client-textract": "^3.587.0",
+    "@aws-sdk/lib-storage": "^3.587.0",
+    "@google-cloud/documentai": "^8.8.0",
+    "aws-sdk": "^2.1631.0",
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "lodash": "^4.17.21",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "pdf-lib": "^1.17.1",
+    "qs": "^6.12.1"
+  }
+}
