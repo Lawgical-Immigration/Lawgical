@@ -1,3 +1,5 @@
+// This file is responsible for extracting data from a passport PDF using Google Cloud Document AI. It reads the PDF, extracts text, and then extracts specific fields like passport number, name, nationality, sex, date of birth, date of issue, and date of expiry. The extracted data is then saved to a text file.
+
 /**
  * TODO(developer): Uncomment these variables before running the sample.
  */
