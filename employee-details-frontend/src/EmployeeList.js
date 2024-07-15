@@ -3,7 +3,6 @@ import { Typography, Container, TextField, Button, Table, TableBody, TableCell, 
 import { Autocomplete } from '@mui/lab';
 import axios from 'axios';
 const EmployeeList = () => {
-    const [showSearchBox, setShowSearchBox] = useState(false);
     const [searchName, setSearchName] = useState('');
     const [selectedNames, setSelectedNames] = useState([]);
     const [checkedItems, setCheckedItems] = useState({});
@@ -18,15 +17,6 @@ const EmployeeList = () => {
     const filteredNames = searchName
         ? names.filter(name => name.toLowerCase().includes(searchName.toLowerCase()))
         : [];
-
-    const handleToggleSearchBox = () => {
-        setShowSearchBox(prevState => {
-            if (prevState) {
-                setSearchName('');
-            }
-            return !prevState;
-        });
-    };
 
     const handleStartImmigration = (name) => {
         if (checkedItems[name]) {
@@ -99,7 +89,6 @@ const EmployeeList = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleToggleSearchBox}
                     style={{
                         backgroundColor: '#3f51b5',
                         color: 'white',
@@ -114,7 +103,6 @@ const EmployeeList = () => {
                 >
                     Add Employee
                 </Button>
-                {showSearchBox && (
                     <div style={{ width: '30%' }}>
                         <Autocomplete
                             freeSolo
@@ -135,7 +123,6 @@ const EmployeeList = () => {
                             style={{ width: '100%' }}
                         />
                     </div>
-                )}
             </div>
             <TableContainer component={Paper} style={{ width: '100%' }}>
                 <Table>
