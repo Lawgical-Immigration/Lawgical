@@ -141,8 +141,12 @@ const EmployeeList = () => {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Checkbox</TableCell>
-                            <TableCell>Name</TableCell>
+                            <TableCell>Select</TableCell>
+                            <TableCell>Last Name</TableCell>
+                            <TableCell>First Name</TableCell>
+                            <TableCell>Date of Birth</TableCell>
+                            <TableCell>Email</TableCell>
+                            <TableCell>Country</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
