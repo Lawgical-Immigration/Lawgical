@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+
 import {
   Typography,
   Container,
@@ -66,6 +68,7 @@ const EmployeeList = () => {
   };
 
   const handleSearch = e => {
+
     setSearchName(e.target.value);
   };
 
@@ -92,8 +95,7 @@ const EmployeeList = () => {
       [name]: !prevState[name],
     }));
   };
-  console.log('showFormState: ', showForm)
-
+  
   return (
     <Container
       style={{
