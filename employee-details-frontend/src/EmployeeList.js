@@ -15,11 +15,13 @@ import {
 } from '@mui/material';
 import { Autocomplete } from '@mui/lab';
 import axios from 'axios';
+import AddEmployeeForm from './AddEmployeeForm';
 
 const EmployeeList = () => {
   const [searchName, setSearchName] = useState('');
   const [selectedNames, setSelectedNames] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
+  const [showForm, setShowForm] = useState(false);
   
 
   const names = [
@@ -90,6 +92,7 @@ const EmployeeList = () => {
       [name]: !prevState[name],
     }));
   };
+  console.log('showFormState: ', showForm)
 
   return (
     <Container
@@ -136,6 +139,9 @@ const EmployeeList = () => {
             boxShadow: '0 3px 5px 2px rgba(63, 81, 181, .3)',
             textTransform: 'none',
             marginRight: '16px',
+          }} onClick={() => {
+            setShowForm(true)
+            console.log('button clicked, showForm state: ', showForm)
           }}
         >
           Add Employee
@@ -161,6 +167,7 @@ const EmployeeList = () => {
           />
         </div>
       </div>
+      <AddEmployeeForm showForm={showForm} setShowForm={setShowForm}/>
       <TableContainer component={Paper} style={{ width: '100%' }}>
         <Table>
           <TableHead>
