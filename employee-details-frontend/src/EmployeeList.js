@@ -74,6 +74,14 @@ const EmployeeList = () => {
       setSelectedNames([...selectedNames, value]);
       setCheckedItems({ ...checkedItems, [value]: false });
     }
+<<<<<<<<< Temporary merge branch 1
+    setSearchName("");
+  };
+
+  const handleDelete = (name) => {
+    setSelectedNames(selectedNames.filter((n) => n !== name));
+    setCheckedItems((prevState) => {
+=========
     setSearchName('');
   };
 
@@ -92,8 +100,7 @@ const EmployeeList = () => {
       [name]: !prevState[name],
     }));
   };
-  console.log('showFormState: ', showForm)
-
+  
   return (
     <Container
       style={{
