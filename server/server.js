@@ -24,7 +24,7 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const employeeSchema = require("./employeeModel");
+const employeeSchema = require("./models/employeeModel");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
