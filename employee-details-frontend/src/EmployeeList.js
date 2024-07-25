@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Typography,
   Container,
@@ -12,68 +12,60 @@ import {
   TableRow,
   Paper,
   Checkbox,
-} from "@mui/material";
-import { Autocomplete } from "@mui/lab";
-import axios from "axios";
+} from '@mui/material';
+import { Autocomplete } from '@mui/lab';
+import axios from 'axios';
+import AddEmployeeForm from './AddEmployeeForm';
+
 const EmployeeList = () => {
-  const [showSearchBox, setShowSearchBox] = useState(false);
-  const [searchName, setSearchName] = useState("");
+  const [searchName, setSearchName] = useState('');
   const [selectedNames, setSelectedNames] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
-  const names = [
-    "Jessica",
-    "Aksharika",
-    "Charlie",
-    "Ijoo",
-    "David",
-    "Eve",
-    "Frank",
-    "Grace",
-    "Hank",
-    "Ivy",
-    "Jack",
-  ];
+  const [showForm, setShowForm] = useState(false);
   
+
+  const names = [
+    'Jessica',
+    'Aksharika',
+    'Charlie',
+    'David',
+    'Eve',
+    'Frank',
+    'Grace',
+    'Hank',
+    'Ivy',
+    'Jack',
+  ];
   const emailMap = {
-    Jessica: "tsaideep1998@gmail.com",
-    Aksharika: "aksharikaraja@gmail.com",
-    Charlie: "charlie@example.com",
-    Ijoo: "ijooyoon.97@gmail.com",
+    Jessica: 'tsaideep1998@gmail.com',
+    Aksharika: 'aksharikaraja@gmail.com',
+    Charlie: 'charlie@example.com',
     // Add the rest of the mappings here
   };
 
   const filteredNames = searchName
-    ? names.filter((name) =>
+    ? names.filter(name =>
         name.toLowerCase().includes(searchName.toLowerCase())
       )
     : [];
 
-  const handleToggleSearchBox = () => {
-    setShowSearchBox((prevState) => {
-      if (prevState) {
-        setSearchName("");
-      }
-      return !prevState;
-    });
-  };
-
-  const handleStartImmigration = (name) => {
+  const handleStartImmigration = name => {
     if (checkedItems[name]) {
       const email = emailMap[name];
       axios
-        .post("http://localhost:5000/send-email", { name, email })
-        .then((response) => {
-          alert("Email sent successfully");
-          console.log("Email sent:", response.data);
+        .post('http://localhost:5000/send-email', { name, email })
+        .then(response => {
+          alert('Email sent successfully');
+          console.log('Email sent:', response.data);
         })
-        .catch((error) => {
-          alert("There was an error sending the email!", error);
-          console.error("There was an error sending the email!", error);
+        .catch(error => {
+          alert('There was an error sending the email!', error);
+          console.error('There was an error sending the email!', error);
         });
     }
   };
 
-  const handleSearch = (e) => {
+  const handleSearch = e => {
     setSearchName(e.target.value);
   };
 
@@ -82,104 +74,117 @@ const EmployeeList = () => {
       setSelectedNames([...selectedNames, value]);
       setCheckedItems({ ...checkedItems, [value]: false });
     }
+<<<<<<<<< Temporary merge branch 1
     setSearchName("");
   };
 
   const handleDelete = (name) => {
     setSelectedNames(selectedNames.filter((n) => n !== name));
     setCheckedItems((prevState) => {
+=========
+    setSearchName('');
+  };
+
+  const handleDelete = name => {
+    setSelectedNames(selectedNames.filter(n => n !== name));
+    setCheckedItems(prevState => {
       const newState = { ...prevState };
       delete newState[name];
       return newState;
     });
   };
 
-  const handleCheckboxChange = (name) => {
-    setCheckedItems((prevState) => ({
+  const handleCheckboxChange = name => {
+    setCheckedItems(prevState => ({
       ...prevState,
       [name]: !prevState[name],
     }));
   };
-
+  
   return (
     <Container
       style={{
-        minHeight: "100vh",
-        backgroundColor: "#f5f5f5",
-        padding: "16px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        minHeight: '100vh',
+        backgroundColor: '#f5f5f5',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
       }}
     >
       <Typography
-        variant="h1"
+        variant='h1'
         style={{
-          color: "#3f51b5", // Attractive color
+          color: '#3f51b5', // Attractive color
           fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
           fontWeight: 700,
-          fontSize: "3rem",
-          textAlign: "center",
-          marginBottom: "16px",
+          fontSize: '3rem',
+          textAlign: 'center',
+          marginBottom: '16px',
         }}
       >
         Welcome to Lawgical
       </Typography>
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "flex-start",
-          marginBottom: "16px",
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'flex-start',
+          marginBottom: '16px',
         }}
       >
         <Button
-          variant="contained"
-          color="primary"
-          onClick={handleToggleSearchBox}
+          variant='contained'
+          color='primary'
           style={{
-            backgroundColor: "#3f51b5",
-            color: "white",
-            padding: "10px 20px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            borderRadius: "8px",
-            boxShadow: "0 3px 5px 2px rgba(63, 81, 181, .3)",
-            textTransform: "none",
-            marginRight: "16px",
+            backgroundColor: '#3f51b5',
+            color: 'white',
+            padding: '10px 20px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            borderRadius: '8px',
+            boxShadow: '0 3px 5px 2px rgba(63, 81, 181, .3)',
+            textTransform: 'none',
+            marginRight: '16px',
+          }} onClick={() => {
+            setShowForm(true)
+            console.log('button clicked, showForm state: ', showForm)
           }}
         >
           Add Employee
         </Button>
-        {showSearchBox && (
-          <div style={{ width: "30%" }}>
-            <Autocomplete
-              freeSolo
-              options={filteredNames}
-              inputValue={searchName}
-              onInputChange={(event, newInputValue) => {
-                setSearchName(newInputValue);
-              }}
-              onChange={handleSelect}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Search..."
-                  onChange={handleSearch}
-                  style={{ width: "100%" }}
-                />
-              )}
-              style={{ width: "100%" }}
-            />
-          </div>
-        )}
+        <div style={{ width: '30%' }}>
+          <Autocomplete
+            freeSolo
+            options={filteredNames}
+            inputValue={searchName}
+            onInputChange={(event, newInputValue) => {
+              setSearchName(newInputValue);
+            }}
+            onChange={handleSelect}
+            renderInput={params => (
+              <TextField
+                {...params}
+                placeholder='Search...'
+                onChange={handleSearch}
+                style={{ width: '100%' }}
+              />
+            )}
+            style={{ width: '100%' }}
+          />
+        </div>
       </div>
-      <TableContainer component={Paper} style={{ width: "100%" }}>
+      <AddEmployeeForm showForm={showForm} setShowForm={setShowForm}/>
+      <TableContainer component={Paper} style={{ width: '100%' }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Checkbox</TableCell>
-              <TableCell>Name</TableCell>
+              <TableCell>Select</TableCell>
+              <TableCell>Last Name</TableCell>
+              <TableCell>First Name</TableCell>
+              <TableCell>Date of Birth</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Country</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -197,17 +202,17 @@ const EmployeeList = () => {
                   <Button
                     onClick={() => handleStartImmigration(name)}
                     disabled={!checkedItems[name]}
-                    variant="contained"
-                    color="primary"
-                    style={{ marginRight: "8px" }}
+                    variant='contained'
+                    color='primary'
+                    style={{ marginRight: '8px' }}
                   >
                     Start Immigration
                   </Button>
                   <Button
                     onClick={() => handleDelete(name)}
                     disabled={!checkedItems[name]}
-                    variant="contained"
-                    color="secondary"
+                    variant='contained'
+                    color='secondary'
                   >
                     Delete
                   </Button>
