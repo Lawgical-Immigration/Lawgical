@@ -15,11 +15,15 @@ import {
 } from "@mui/material";
 import { Autocomplete } from "@mui/lab";
 import axios from "axios";
+
+import AddEmployeeForm from './AddEmployeeForm';
+
 const EmployeeList = () => {
-  const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [selectedNames, setSelectedNames] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
+  const [showForm, setShowForm] = useState(false);
+
   const names = [
     "Jessica",
     "Aksharika",
@@ -48,14 +52,6 @@ const EmployeeList = () => {
       )
     : [];
 
-  const handleToggleSearchBox = () => {
-    setShowSearchBox((prevState) => {
-      if (prevState) {
-        setSearchName("");
-      }
-      return !prevState;
-    });
-  };
 
   const handleStartImmigration = (name) => {
     if (checkedItems[name]) {
@@ -136,7 +132,6 @@ const EmployeeList = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleToggleSearchBox}
           style={{
             backgroundColor: "#3f51b5",
             color: "white",
@@ -148,10 +143,12 @@ const EmployeeList = () => {
             textTransform: "none",
             marginRight: "16px",
           }}
+          onClick={() => {
+            setShowForm(true)
+          }}
         >
           Add Employee
         </Button>
-        {showSearchBox && (
           <div style={{ width: "30%" }}>
             <Autocomplete
               freeSolo
@@ -172,14 +169,18 @@ const EmployeeList = () => {
               style={{ width: "100%" }}
             />
           </div>
-        )}
       </div>
+      <AddEmployeeForm showForm={showForm} setShowForm={setShowForm} />
       <TableContainer component={Paper} style={{ width: "100%" }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Checkbox</TableCell>
-              <TableCell>Name</TableCell>
+            <TableCell>Select</TableCell>
+              <TableCell>Last Name</TableCell>
+              <TableCell>First Name</TableCell>
+              <TableCell>Date of Birth</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Country</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
