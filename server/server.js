@@ -23,10 +23,10 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const employeeSchema = require("./employeeModel");
+const Employee = require("./models/employeeModel");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -60,11 +60,12 @@ const upload = multer({ storage: storage });
 // In-memory store for email addresses
 
 app.post("/send-email", async (req, res) => {
-  const { name, email } = req.body;
+  const { firstName, lastName, email } = req.body;
   const employee =
-    (await employeeSchema.findOne({ name, email })) ||
-    (await employeeSchema.create({
-      name,
+    (await Employee.findOne({ firstName, lastName, email })) ||
+    (await Employee.create({
+      firstName,
+      lastName,
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
@@ -75,7 +76,7 @@ app.post("/send-email", async (req, res) => {
     from: "lawgical.immigration@gmail.com",
     to: email,
     subject: "🎉 Congratulations! Let’s Get Started on Your Visa Application!",
-    text: `Hello ${name},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
+    text: `Hello ${firstName},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
   };
   try {
     transporter.sendMail(mailOptions, (error, info) => {

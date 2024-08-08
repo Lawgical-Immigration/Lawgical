@@ -12,7 +12,9 @@ employeeController.addEmployee = async(req, res, next) => {
     const addEmployee = await Employee.create(newEmployee);
     const {firstName, lastName} = addEmployee;
 
-    res.locals.newEmployeeName = {firstName, lastName};
+    console.log('new emp added: ', addEmployee);
+
+    res.locals.newEmployeeName = `${firstName} ${lastName}`;
 
     return next();
   } catch (error) {

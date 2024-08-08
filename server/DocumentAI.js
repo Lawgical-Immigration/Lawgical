@@ -9,7 +9,7 @@ const processorId = ''; // Create processor in Cloud Console
 const filePath = 'passport.pdf';
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 const {DocumentProcessorServiceClient} =
   require('@google-cloud/documentai').v1;
 const fs = require('fs').promises;
