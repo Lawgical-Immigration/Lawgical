@@ -69,6 +69,7 @@ const EmployeeList = () => {
         .catch((error) => {
           alert("There was an error sending the email!", error);
           console.error("There was an error sending the email!", error);
+          console.log("email: ", email);
         });
     }
   };

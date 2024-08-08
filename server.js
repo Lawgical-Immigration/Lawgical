@@ -1,5 +1,4 @@
 // Main server file for the Lawgical application. It handles various functionalities such as sending emails, uploading files, processing passports, and filling PDF forms. It uses various libraries like express, nodemailer, multer, aws-sdk, and pdf-lib. The server listens on a specific port and handles HTTP requests.
-
 const express = require("express");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
@@ -8,12 +7,14 @@ const crypto = require("crypto");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-require("dotenv").config();
 const aws = require("aws-sdk");
 const _ = require("lodash");
 const { PDFDocument } = require("pdf-lib");
 const dotenv = require("dotenv");
 dotenv.config();
+const http = require("http");
+const socketIo = require('socket.io');
+const setupWebSocket = require('./chatbotWebSocket');
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MDB_URI, {
   useNewUrlParser: true,
@@ -24,13 +25,25 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const employeeSchema = require("./employeeModel");
+const User = require("./employee-details-frontend/src/Models/userModel");
+const Conversation = require("./employee-details-frontend/src/Models/conversationModel");
+const Message = require("./employee-details-frontend/src/Models/messageModel");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    allowedHeaders: ['Content-Type'],
+    credentials: true // Allow credentials if needed
+  }
+})
+setupWebSocket(io);
 
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cors())
 
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
@@ -63,15 +76,15 @@ const upload = multer({ storage: storage });
 app.post("/send-email", async (req, res) => {
   const { name, email } = req.body;
   const employee =
-    (await employeeSchema.findOne({ name, email })) ||
-    (await employeeSchema.create({
+    (await User.findOne({ name, email })) ||
+    (await User.create({
       name,
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
   const uniqueId = employee.id;
   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
-
+  console.log("employee: ", employee);
   const mailOptions = {
     from: "lawgical.immigration@gmail.com",
     to: email,
@@ -102,7 +115,7 @@ app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
   const { uniqueId } = req.params;
-  const employeeDoc = await employeeSchema.findOne({ id: uniqueId });
+  const employeeDoc = await User.findOne({ id: uniqueId });
   const email = employeeDoc && employeeDoc.email;
   console.log("id: ", uniqueId);
   console.log("email is : ", email);
@@ -162,6 +175,37 @@ app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
   } catch (error) {
     console.error(`Error processing file: ${error}`);
     res.status(500).send("Error processing file.");
+  }
+});
+
+app.get("/api/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({ id });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    console.log("successfully fetched user: ", user)
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error", err });
+  }
+});
+
+
+app.get("/conversations/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const convo = (
+      await Conversation.findOne({ user: userId }) ||
+      await Conversation.create({ user: userId })
+    );
+    const messages = await Message.find({ conversation: convo._id });
+    res.status(200).json({ convoID: convo._id, messages: messages});
+  } catch (err) {
+    console.log("error in retrieving conversations: ", err);
+    res.status(500).json({ message: "Server error", err });
   }
 });
 
@@ -292,9 +336,10 @@ const fieldMapping = {
   Surname: "form1[0].#subform[0].Line1_FamilyName[0]",
 };
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
 
 // --------------------------------------Gusto Implementation --------------------------------------------------
 // const express = require('express');
