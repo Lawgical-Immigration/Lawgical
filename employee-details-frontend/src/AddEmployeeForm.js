@@ -5,8 +5,8 @@ import { useState } from 'react';
 export default function AddEmployeeForm({showForm, setShowForm}) {
 
   const [employeeInfo, setEmployeeInfo] = useState({
-    'lastName': '',
     'firstName': '',
+    'lastName': '',
     'DOB': '',
     'email': '',
     'country': ''
@@ -35,8 +35,8 @@ export default function AddEmployeeForm({showForm, setShowForm}) {
   for (const detail in employeeInfo) {
 
     const inputLame = (() => {
-      if(detail === 'lastName') return 'Last Name';
       if(detail === 'firstName') return 'First Name';
+      if(detail === 'lastName') return 'Last Name';
       else return detail[0].toUpperCase() + detail.slice(1);
     })();
 
