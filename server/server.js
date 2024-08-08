@@ -8,7 +8,6 @@ const crypto = require("crypto");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-require("dotenv").config();
 const aws = require("aws-sdk");
 const _ = require("lodash");
 const { PDFDocument } = require("pdf-lib");
@@ -69,7 +68,7 @@ app.post("/send-email", async (req, res) => {
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
-  const uniqueId = employee.id;
+  const uniqueId = employee.employeeId;
   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
 
   const mailOptions = {
@@ -291,6 +290,17 @@ const fieldMapping = {
   "Given Name(s)": "form1[0].#subform[0].Line1_GivenName[0]",
   Surname: "form1[0].#subform[0].Line1_FamilyName[0]",
 };
+
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: `Express error handler caught unknown middleware error. ERR: ${err}`,
+    status: 400,
+    message: {err: 'An error occured. See server log for details.'}
+  };
+  const errObj = Object.assign(defaultErr, err);
+  console.log(errObj.log);
+  return res.status(errObj.status).json(errObj.message)
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
