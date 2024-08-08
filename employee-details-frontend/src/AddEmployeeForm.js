@@ -5,8 +5,8 @@ import { useState } from 'react';
 export default function AddEmployeeForm({showForm, setShowForm}) {
 
   const [employeeInfo, setEmployeeInfo] = useState({
-    'lastName': '',
     'firstName': '',
+    'lastName': '',
     'DOB': '',
     'email': '',
     'country': ''
@@ -23,20 +23,42 @@ export default function AddEmployeeForm({showForm, setShowForm}) {
     }))
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // fetch request to add employeeInfo to DB here. 
+    try {
+      const addNewEmployee = await fetch('http://localhost:5050/employee', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(employeeInfo)
+      })
 
-    console.log('Add new employee:', employeeInfo)
+      const response = await addNewEmployee.json();
+      alert(response);
 
+      setEmployeeInfo(prevState => ({
+        ...prevState,
+        'firstName': '',
+        'lastName': '',
+        'DOB': '',
+        'email': '',
+        'country': ''
+      }))
+      
+      setShowForm(false);
+    } catch (error) {
+      console.log(error);
+      alert('Error adding employe. Please try again.')
+    }
   }
 
   for (const detail in employeeInfo) {
 
     const inputLame = (() => {
-      if(detail === 'lastName') return 'Last Name';
       if(detail === 'firstName') return 'First Name';
+      if(detail === 'lastName') return 'Last Name';
       else return detail[0].toUpperCase() + detail.slice(1);
     })();
 

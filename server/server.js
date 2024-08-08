@@ -8,7 +8,6 @@ const crypto = require("crypto");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-require("dotenv").config();
 const aws = require("aws-sdk");
 const _ = require("lodash");
 const { PDFDocument } = require("pdf-lib");
@@ -24,10 +23,11 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const employeeSchema = require("./employeeModel");
+const Employee = require("./models/employeeModel");
+const employeeRouter = require('./routers/employeeRouter');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -60,23 +60,26 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // In-memory store for email addresses
 
+app.use('/employee', employeeRouter);
+
 app.post("/send-email", async (req, res) => {
-  const { name, email } = req.body;
+  const { firstName, lastName, email } = req.body;
   const employee =
-    (await employeeSchema.findOne({ name, email })) ||
-    (await employeeSchema.create({
-      name,
+    (await Employee.findOne({ firstName, lastName, email })) ||
+    (await Employee.create({
+      firstName,
+      lastName,
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
-  const uniqueId = employee.id;
+  const uniqueId = employee.employeeId;
   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
 
   const mailOptions = {
     from: "lawgical.immigration@gmail.com",
     to: email,
     subject: "🎉 Congratulations! Let’s Get Started on Your Visa Application!",
-    text: `Hello ${name},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
+    text: `Hello ${firstName},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
   };
   try {
     transporter.sendMail(mailOptions, (error, info) => {
@@ -291,6 +294,17 @@ const fieldMapping = {
   "Given Name(s)": "form1[0].#subform[0].Line1_GivenName[0]",
   Surname: "form1[0].#subform[0].Line1_FamilyName[0]",
 };
+
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: `Express error handler caught unknown middleware error. ERR: ${err}`,
+    status: 400,
+    message: {err: 'An error occured. See server log for details.'}
+  };
+  const errObj = Object.assign(defaultErr, err);
+  console.log(errObj.log);
+  return res.status(errObj.status).json(errObj.message)
+})
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
