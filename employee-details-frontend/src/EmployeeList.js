@@ -57,7 +57,7 @@ const EmployeeList = () => {
     if (checkedItems[name]) {
       const email = emailMap[name];
       axios
-        .post("http://localhost:5000/send-email", { name, email })
+        .post("http://localhost:5050/send-email", { name, email })
         .then((response) => {
           alert("Email sent successfully");
           console.log("Email sent:", response.data);
