@@ -24,6 +24,7 @@ mongoose.connection.once("open", () => {
 });
 
 const Employee = require("./models/employeeModel");
+const employeeRouter = require('./routers/employeeRouter');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -58,6 +59,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 // In-memory store for email addresses
+
+app.use('/employee', employeeRouter);
 
 app.post("/send-email", async (req, res) => {
   const { firstName, lastName, email } = req.body;
