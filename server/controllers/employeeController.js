@@ -1,5 +1,8 @@
 const Employee = require('../models/employeeModel');
 ;
+
+const crypto = require("crypto");
+
 const employeeController = {};
 
 employeeController.addEmployee = async(req, res, next) => {
@@ -12,8 +15,6 @@ employeeController.addEmployee = async(req, res, next) => {
     const addEmployee = await Employee.create(newEmployee);
     const {firstName, lastName} = addEmployee;
 
-    console.log('new emp added: ', addEmployee);
-
     res.locals.newEmployeeName = `${firstName} ${lastName}`;
 
     return next();
@@ -25,3 +26,5 @@ employeeController.addEmployee = async(req, res, next) => {
     })
   }
 }
+
+module.exports = employeeController;
