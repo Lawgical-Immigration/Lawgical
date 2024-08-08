@@ -23,13 +23,35 @@ export default function AddEmployeeForm({showForm, setShowForm}) {
     }))
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // fetch request to add employeeInfo to DB here. 
+    try {
+      const addNewEmployee = await fetch('http://localhost:5050/employee', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(employeeInfo)
+      })
 
-    console.log('Add new employee:', employeeInfo)
+      const response = await addNewEmployee.json();
+      alert(response);
 
+      setEmployeeInfo(prevState => ({
+        ...prevState,
+        'firstName': '',
+        'lastName': '',
+        'DOB': '',
+        'email': '',
+        'country': ''
+      }))
+      
+      setShowForm(false);
+    } catch (error) {
+      console.log(error);
+      alert('Error adding employe. Please try again.')
+    }
   }
 
   for (const detail in employeeInfo) {
