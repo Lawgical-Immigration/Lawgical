@@ -2,7 +2,9 @@ const React = require("react");
 const { useState, useEffect } = React;
 const io = require("socket.io-client");
 
-const socket = io("http://127.0.0.1:5000");
+const socket = io("http://127.0.0.1:5000", {
+  transports: ['websocket']
+});
 
 function ChatInterface({ userID, userName }) {
   const [input, setInput] = useState("");
@@ -49,10 +51,12 @@ function ChatInterface({ userID, userName }) {
   useEffect(() => {
     const handleMessage = (message) => {
       console.log("New message received: ", message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+      setMessages((prevMessages) => [...prevMessages, message]); // Use the correct approach to update state
+      console.log("messages after: ", messages); // This might still show stale state
     };
+
+
     socket.on("receiveMessage", handleMessage);
-  
     return () => {
       socket.off("receiveMessage", handleMessage);
     };
@@ -61,7 +65,7 @@ function ChatInterface({ userID, userName }) {
 
   const sendMessage = () => {
     if (input.trim()) {
-      console.log("Message being sent in sendMessage function!")
+      console.log("all messages so far: ", messages)
       socket.emit("sendMessage", {
         convoID,
         sender: userName,

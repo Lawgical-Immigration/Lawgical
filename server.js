@@ -32,15 +32,7 @@ const Message = require("./employee-details-frontend/src/Models/messageModel");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    allowedHeaders: ['Content-Type'],
-    credentials: true // Allow credentials if needed
-  }
-})
-setupWebSocket(io);
+setupWebSocket(server);
 
 app.use(bodyParser.json());
 app.use(cors())

@@ -242,7 +242,7 @@ export default EmployeeList;
 // if (employees.length === 0) {
 //     return <div>Loading...</div>;
 // }
-{
+//{
   /* <thead>
                     <tr>
                         <th>S.no</th>
@@ -261,4 +261,4 @@ export default EmployeeList;
                         </tr>
                     ))}
                 </tbody> */
-}
+//}

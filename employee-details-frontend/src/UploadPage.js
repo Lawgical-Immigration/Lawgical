@@ -14,6 +14,9 @@ const UploadPage = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(`http://localhost:5000/api/user/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const user = await response.json();
         if (!user) console.log("UPLOADPAGE User not found for id: ", id);
         else {
@@ -28,7 +31,7 @@ const UploadPage = () => {
       }
     };
     fetchData();
-  },[])
+  },[id])
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);

@@ -4,7 +4,7 @@ const socketIo = require('socket.io');
 const Message = require('./employee-details-frontend/src/Models/messageModel');
 
 dotenv.config();
-const accessToken = process.env.API_KEY;
+const accessToken = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(accessToken);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
@@ -28,15 +28,17 @@ const setupWebSocket = (server) => {
     console.log("New client connected");
     // listens for incoming messages
     socket.on('sendMessage', async (data) => {
+      console.log("received sendMessage event and data is: ", data);
       const { convoID, sender, content } = data;
       // post message to database
       await Message.create({
-        convoID,
+        conversation: convoID,
         sender,
         content,
       });
       const botResponse = await generateText(content);
       console.log("botResponse: ", botResponse);
+      
       if (botResponse) {
         try {
           const message = await Message.create({
@@ -45,14 +47,11 @@ const setupWebSocket = (server) => {
             content: botResponse,
           });
           console.log("message that is being sent: ", message);
+          io.to(convoID).emit('receiveMessage', message);
         } catch (err) {
           console.log("failed to create message from bot response")
         }
-        
-
       }
-
-      io.to(convoID).emit('receiveMessage', botResponse);
     })
     // handle joining a conversation room
     socket.on('joinConversation', (convoID) => {
