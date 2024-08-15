@@ -186,12 +186,16 @@ app.get("/api/user/:id", async (req, res) => {
 });
 
 
+
 app.get("/conversations/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
+
     const convo = (
       await Conversation.findOne({ user: userId }) ||
-      await Conversation.create({ user: userId })
+      await Conversation.create({ 
+        user: userId, 
+      })
     );
     const messages = await Message.find({ conversation: convo._id });
     res.status(200).json({ convoID: convo._id, messages: messages});
