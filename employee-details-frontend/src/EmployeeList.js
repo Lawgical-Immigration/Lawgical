@@ -65,6 +65,7 @@ const EmployeeList = () => {
         .catch((error) => {
           alert("There was an error sending the email!", error);
           console.error("There was an error sending the email!", error);
+          console.log("email: ", email);
         });
     }
   };
@@ -242,7 +243,7 @@ export default EmployeeList;
 // if (employees.length === 0) {
 //     return <div>Loading...</div>;
 // }
-{
+//{
   /* <thead>
                     <tr>
                         <th>S.no</th>
@@ -261,4 +262,4 @@ export default EmployeeList;
                         </tr>
                     ))}
                 </tbody> */
-}
+//}
