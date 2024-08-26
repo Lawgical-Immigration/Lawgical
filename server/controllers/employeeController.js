@@ -22,7 +22,17 @@ const employeeController = {
   addEmployee: async(req, res, next) => {
     const { firstName, lastName, DOB, email, country } = req.body;
     const newEmployee = { firstName, lastName, DOB, email, country };
-    newEmployee.employeeId = crypto.randomBytes(16).toString('hex');
+
+    let empId = null;
+
+    while (empId === null) {
+      const tempId = crypto.randomBytes(16).toString('hex');
+      const checkIfExists = await Employee.find({employeeId: tempId});
+
+      if(checkIfExists.length === 0) empId = tempId;
+    }
+    
+    newEmployee.employeeId = empId;
   
     try {
       const addEmployee = await Employee.create(newEmployee);
