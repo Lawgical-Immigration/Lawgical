@@ -16,7 +16,8 @@ import {
 import { Autocomplete } from "@mui/lab";
 import axios from "axios";
 
-import AddEmployeeForm from './AddEmployeeForm';
+import AddEmployeeForm from './components/AddEmployeeForm';
+import EmployeeTable from "./components/EmployeeTable";
 
 const EmployeeList = () => {
   const [searchName, setSearchName] = useState("");
@@ -171,7 +172,8 @@ const EmployeeList = () => {
           </div>
       </div>
       <AddEmployeeForm showForm={showForm} setShowForm={setShowForm} />
-      <TableContainer component={Paper} style={{ width: "100%" }}>
+      <EmployeeTable />
+      {/* <TableContainer component={Paper} style={{ width: "100%" }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -217,7 +219,7 @@ const EmployeeList = () => {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </TableContainer> */}
     </Container>
   );
 };

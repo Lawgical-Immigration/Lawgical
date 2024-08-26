@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import {
-  TextField,
   Button,
   Table,
   TableBody,
@@ -12,17 +11,10 @@ import {
   Paper,
   Checkbox,
 } from "@mui/material";
-import { Autocomplete } from "@mui/lab";
-import { Check } from "@mui/icons-material";
-
 
 export default function EmployeeTable(){
   const [employeeData, setEmployeeData] = useState([]);
-  
-  const tableCellList = ['Select', 'Status','Last Name', 'First Name', 'Date of Birth', 'Email', 'Country', 'Actions'];
-  const tableCells = tableCellList.map(el => <TableCell>{el}</TableCell>);
-  const employees = [];
-
+    
   useEffect(() => {
     axios.get('http://localhost:5050/employee')
     .then(res => {
@@ -31,6 +23,9 @@ export default function EmployeeTable(){
     .catch(err => console.error(`Error retrieving employees. ERR: ${err}`))
   }, []);
   
+  const tableHeaderList = ['Select', 'Status','Last Name', 'First Name', 'Date of Birth', 'Email', 'Country', 'Actions'];
+  const tableHeader = tableHeaderList.map(el => <TableCell>{el}</TableCell>);
+  const employees = [];
 
   for (const employee of employeeData) {
 
@@ -54,10 +49,10 @@ export default function EmployeeTable(){
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow>{tableCells}</TableRow>
+          <TableRow>{tableHeader}</TableRow>
         </TableHead>
-        {employees}
+        <TableBody>{employees}</TableBody>
       </Table>
     </TableContainer>
   )
-}
+};
