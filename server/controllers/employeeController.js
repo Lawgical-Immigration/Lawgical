@@ -7,7 +7,7 @@ const employeeController = {
 
   getEmployee: async(req, res, next) => {
     try {
-      const employees = await Employee.find({}, 'firstName lastName DOB email country').exec();
+      const employees = await Employee.find({}, 'status firstName lastName DOB email country').exec();
 
       res.locals.employeeList = employees;
       return next();
