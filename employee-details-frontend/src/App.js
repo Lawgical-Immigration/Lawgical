@@ -8,16 +8,16 @@ import UploadPage from './pages/UploadPage';
 import Dashboard from './pages/Dashboard';
 
 function App() {
-    return (
-        <Router>
-            <Routes>
-                <Route path='/' element={<Dashboard/>} />
-                <Route path="/employeelist" element={<EmployeeList />} />
-                <Route path="/upload/:id" element={<UploadPage />} />
-                <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-            </Routes>
-        </Router>
-    );
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<EmployeeList />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/upload/:id" element={<UploadPage />} />
+        <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
