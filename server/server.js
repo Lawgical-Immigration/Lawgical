@@ -1,5 +1,4 @@
 // Main server file for the Lawgical application. It handles various functionalities such as sending emails, uploading files, processing passports, and filling PDF forms. It uses various libraries like express, nodemailer, multer, aws-sdk, and pdf-lib. The server listens on a specific port and handles HTTP requests.
-
 const express = require("express");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
@@ -13,6 +12,9 @@ const _ = require("lodash");
 const { PDFDocument } = require("pdf-lib");
 const dotenv = require("dotenv");
 dotenv.config();
+const http = require("http");
+const socketIo = require('socket.io');
+const setupWebSocket = require('./chatbotWebSocket');
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MDB_URI, {
   useNewUrlParser: true,
@@ -23,14 +25,17 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const Employee = require("./models/employeeModel");
-const employeeRouter = require('./routers/employeeRouter');
+const User = require("./employee-details-frontend/src/Models/userModel");
+const Conversation = require("./employee-details-frontend/src/Models/conversationModel");
+const Message = require("./employee-details-frontend/src/Models/messageModel");
 
 const app = express();
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+setupWebSocket(server);
 
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cors())
 
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
@@ -60,26 +65,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // In-memory store for email addresses
 
-app.use('/employee', employeeRouter);
-
 app.post("/send-email", async (req, res) => {
-  const { firstName, lastName, email } = req.body;
+  const { name, email } = req.body;
   const employee =
-    (await Employee.findOne({ firstName, lastName, email })) ||
-    (await Employee.create({
-      firstName,
-      lastName,
+    (await User.findOne({ name, email })) ||
+    (await User.create({
+      name,
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
-  const uniqueId = employee.employeeId;
+  const uniqueId = employee.id;
   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
-
+  console.log("employee: ", employee);
   const mailOptions = {
     from: "lawgical.immigration@gmail.com",
     to: email,
     subject: "🎉 Congratulations! Let’s Get Started on Your Visa Application!",
-    text: `Hello ${firstName},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
+    text: `Hello ${name},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
   };
   try {
     transporter.sendMail(mailOptions, (error, info) => {
@@ -105,7 +107,7 @@ app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
     return res.status(400).send("No file uploaded.");
   }
   const { uniqueId } = req.params;
-  const employeeDoc = await employeeSchema.findOne({ id: uniqueId });
+  const employeeDoc = await User.findOne({ id: uniqueId });
   const email = employeeDoc && employeeDoc.email;
   console.log("id: ", uniqueId);
   console.log("email is : ", email);
@@ -165,6 +167,41 @@ app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
   } catch (error) {
     console.error(`Error processing file: ${error}`);
     res.status(500).send("Error processing file.");
+  }
+});
+
+app.get("/api/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findOne({ id });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    console.log("successfully fetched user: ", user)
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error", err });
+  }
+});
+
+
+
+app.get("/conversations/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const convo = (
+      await Conversation.findOne({ user: userId }) ||
+      await Conversation.create({ 
+        user: userId, 
+      })
+    );
+    const messages = await Message.find({ conversation: convo._id });
+    res.status(200).json({ convoID: convo._id, messages: messages});
+  } catch (err) {
+    console.log("error in retrieving conversations: ", err);
+    res.status(500).json({ message: "Server error", err });
   }
 });
 
@@ -295,71 +332,6 @@ const fieldMapping = {
   Surname: "form1[0].#subform[0].Line1_FamilyName[0]",
 };
 
-app.use((err, req, res, next) => {
-  const defaultErr = {
-    log: `Express error handler caught unknown middleware error. ERR: ${err}`,
-    status: 400,
-    message: {err: 'An error occured. See server log for details.'}
-  };
-  const errObj = Object.assign(defaultErr, err);
-  console.log(errObj.log);
-  return res.status(errObj.status).json(errObj.message)
-})
-
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-// --------------------------------------Gusto Implementation --------------------------------------------------
-// const express = require('express');
-// const axios = require('axios');
-// const cors = require('cors');
-// require('dotenv').config();
-
-// const app = express();
-// const PORT = process.env.PORT || 8000;
-
-// // Store your access token and company UUID
-// const ACCESS_TOKEN = '2K0JR-d3lSvWm3DvHKL5jY1qAlZjW8btE4tvrVtSO_4'; // Replace with your actual access token
-// const COMPANY_UUID = '689e95c7-ce43-49fe-8149-5be705615e76'; // Replace with your actual company UUID
-// const COMPANY_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}`;
-// const EMPLOYEES_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}/employees`;
-
-// app.use(cors());
-
-// // Endpoint to fetch company details
-// app.get('/company', async (req, res) => {
-//     try {
-//         const response = await axios.get(COMPANY_URL, {
-//             headers: {
-//                 'Authorization': `Bearer ${ACCESS_TOKEN}`
-//             }
-//         });
-//         res.json(response.data);
-//     } catch (error) {
-//         console.error('Error fetching company details:', error.response ? error.response.data : error.message);
-//         res.status(error.response ? error.response.status : 500).send('Failed to fetch company details');
-//     }
-// });
-
-// // Endpoint to fetch employee details
-// app.get('/employees', async (req, res) => {
-
-//     try {
-//         const response = await axios.get(EMPLOYEES_URL, {
-//             headers: {
-//                 'Authorization': `Bearer ${ACCESS_TOKEN}`
-//             }
-//         });
-
-//         res.json(response.data);
-//     } catch (error) {
-//         console.error('Error fetching employees:', error.response ? error.response.data : error.message);
-//         res.status(error.response ? error.response.status : 500).send('Failed to fetch employees');
-//     }
-// });
-
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port ${PORT}`);
-// });
-//----------------------------------------------------------------------------------------------------------------
