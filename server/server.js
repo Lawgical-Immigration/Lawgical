@@ -1,7 +1,6 @@
 // Main server file for the Lawgical application. It handles various functionalities such as sending emails, uploading files, processing passports, and filling PDF forms. It uses various libraries like express, nodemailer, multer, aws-sdk, and pdf-lib. The server listens on a specific port and handles HTTP requests.
 const express = require("express");
 const nodemailer = require("nodemailer");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const crypto = require("crypto");
 const multer = require("multer");
@@ -36,7 +35,7 @@ const PORT = process.env.PORT || 5050;
 const server = http.createServer(app);
 setupWebSocket(server);
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors())
 
 // Configure nodemailer
@@ -67,8 +66,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 // In-memory store for email addresses
 
+app.use('/employee', employeeRouter);
+
 app.post("/send-email", async (req, res) => {
-  const { name, email } = req.body;
+  const { firstName, lastName, email } = req.body;
   const employee =
     (await User.findOne({ firstName, email })) ||
     (await User.create({
@@ -76,14 +77,14 @@ app.post("/send-email", async (req, res) => {
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
-  const uniqueId = employee.id;
+  const uniqueId = employee.employeeId;
   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
   console.log("employee: ", employee);
   const mailOptions = {
     from: "lawgical.immigration@gmail.com",
     to: email,
     subject: "🎉 Congratulations! Let’s Get Started on Your Visa Application!",
-    text: `Hello ${name},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
+    text: `Hello ${firstName},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
   };
   try {
     transporter.sendMail(mailOptions, (error, info) => {
@@ -361,8 +362,6 @@ server.listen(PORT, () => {
 // const PORT = process.env.PORT || 8000;
 
 // // Store your access token and company UUID
-// const ACCESS_TOKEN = '2K0JR-d3lSvWm3DvHKL5jY1qAlZjW8btE4tvrVtSO_4'; // Replace with your actual access token
-// const COMPANY_UUID = '689e95c7-ce43-49fe-8149-5be705615e76'; // Replace with your actual company UUID
 // const COMPANY_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}`;
 // const EMPLOYEES_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}/employees`;
 
