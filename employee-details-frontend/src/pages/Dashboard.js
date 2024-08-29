@@ -1,56 +1,86 @@
 import React, { useState } from 'react';
-import LoginPage from '../components/LoginPage';
+import Signup from '../components/Signup'; // Import the Signup component
 
 export default function Dashboard() {
-  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
-  const openEmployeeModal = () => {
-    setIsEmployeeModalOpen(true);
+  const openSignup = () => {
+    setIsSignupOpen(true);
   };
 
-  const closeEmployeeModal = () => {
-    setIsEmployeeModalOpen(false);
+  const closeSignup = () => {
+    setIsSignupOpen(false);
   };
 
   return (
-    <div className="flex flex-col items-center bg-gray-200 p-4 border border-gray-300">
+    <div className="relative flex flex-col items-center min-h-screen p-4 bg-gray-200">
       {/* Header */}
-      <div className="w-full bg-blue-400 p-4">
-        <h1 className="text-center text-2xl font-bold text-black">LAWGICAL</h1>
+      <div className="w-full p-4 bg-blue-400">
+        <h1 className="text-2xl font-bold text-center text-black">LAWGICAL</h1>
       </div>
 
       {/* Buttons Row */}
-      <div className="flex justify-between w-full mt-4 px-10">
+      <div className="flex justify-between w-full px-10 mt-4">
         <button
-          className="border border-gray-500 p-2 bg-white text-black"
-          onClick={openEmployeeModal}
+          className="p-2 text-black bg-white border border-gray-500"
+          onClick={openSignup}
         >
           EMPLOYEE
         </button>
-        <button className="border border-gray-500 p-2 bg-white text-black">
+        <button className="p-2 text-black bg-white border border-gray-500">
           EMPLOYER
         </button>
-        <button className="border border-gray-500 p-2 bg-white text-black">
+        <button className="p-2 text-black bg-white border border-gray-500">
           ATTORNEY
         </button>
       </div>
 
-      {/* Employee Login Modal */}
-      {isEmployeeModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-            <div className="flex justify-end">
-              <button
-                className="text-gray-500 hover:text-gray-700"
-                onClick={closeEmployeeModal}
-              >
-                &#10005; {/* X icon for closing the modal */}
-              </button>
-            </div>
-            <LoginPage />
-          </div>
-        </div>
-      )}
+      {/* Signup Modal */}
+      {isSignupOpen && <Signup closeSignup={closeSignup} />}
     </div>
   );
 }
+
+
+// import React, { useState } from 'react';
+// import SignupPage from '../components/SignupPage'; // Import the LoginPage component
+
+// export default function Dashboard() {
+//   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+//   const openLoginModal = () => {
+//     setIsLoginModalOpen(true);
+//   };
+
+//   const closeLoginModal = () => {
+//     setIsLoginModalOpen(false);
+//   };
+
+//   return (
+//     <div className="relative flex flex-col items-center min-h-screen p-4 bg-gray-200">
+//       {/* Header */}
+//       <div className="w-full p-4 bg-blue-400">
+//         <h1 className="text-2xl font-bold text-center text-black">LAWGICAL</h1>
+//       </div>
+
+//       {/* Buttons Row */}
+//       <div className="flex justify-between w-full px-10 mt-4">
+//         <button
+//           className="p-2 text-black bg-white border border-gray-500"
+//           onClick={openLoginModal}
+//         >
+//           EMPLOYEE
+//         </button>
+//         <button className="p-2 text-black bg-white border border-gray-500">
+//           EMPLOYER
+//         </button>
+//         <button className="p-2 text-black bg-white border border-gray-500">
+//           ATTORNEY
+//         </button>
+//       </div>
+
+//       {/* Login Modal */}
+//       <SignupPage showForm={isLoginModalOpen} setShowForm={setIsLoginModalOpen} />
+//     </div>
+//   );
+// }
