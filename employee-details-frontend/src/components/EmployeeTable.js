@@ -31,7 +31,7 @@ export default function EmployeeTable(){
 
     const rowFieldsList = ['status', 'lastName', 'firstName', 'DOB', 'email', 'country'];
     
-    const rowFields = rowFieldsList.map(el => <TableCell>{employee[el]}</TableCell>);
+    const rowFields = rowFieldsList.map(el => <TableCell key={employee._id}>{employee[el]}</TableCell>);
     
     employees.push(
       <TableRow>
