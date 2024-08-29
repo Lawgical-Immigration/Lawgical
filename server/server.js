@@ -14,7 +14,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const http = require("http");
 const socketIo = require('socket.io');
-const setupWebSocket = require('./chatbotWebSocket');
+const setupWebSocket = require('../chatbotWebSocket');
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MDB_URI, {
   useNewUrlParser: true,
@@ -25,12 +25,14 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const User = require("./employee-details-frontend/src/Models/userModel");
-const Conversation = require("./employee-details-frontend/src/Models/conversationModel");
-const Message = require("./employee-details-frontend/src/Models/messageModel");
+const User = require("./models/userModel");
+const Conversation = require("./models/conversationModel");
+const Message = require("./models/messageModel");
+
+const employeeRouter = require('./routers/employeeRouter')
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 const server = http.createServer(app);
 setupWebSocket(server);
 
@@ -68,9 +70,9 @@ const upload = multer({ storage: storage });
 app.post("/send-email", async (req, res) => {
   const { name, email } = req.body;
   const employee =
-    (await User.findOne({ name, email })) ||
+    (await User.findOne({ firstName, email })) ||
     (await User.create({
-      name,
+      firstName,
       email,
       id: crypto.randomBytes(16).toString("hex"),
     }));
@@ -332,6 +334,73 @@ const fieldMapping = {
   Surname: "form1[0].#subform[0].Line1_FamilyName[0]",
 };
 
+app.use((err, req, res, next) => {
+  const defaultErr = {
+    log: `Express error handler caught unknown middleware error. ERR: ${err}`,
+    status: 400,
+    message: {err: 'An error occured. See server log for details.'}
+  };
+  const errObj = Object.assign(defaultErr, err);
+  console.log(errObj.log);
+  return res.status(errObj.status).json(errObj.message)
+})
+
+
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+// --------------------------------------Gusto Implementation --------------------------------------------------
+// const express = require('express');
+// const axios = require('axios');
+// const cors = require('cors');
+// require('dotenv').config();
+
+// const app = express();
+// const PORT = process.env.PORT || 8000;
+
+// // Store your access token and company UUID
+// const ACCESS_TOKEN = '2K0JR-d3lSvWm3DvHKL5jY1qAlZjW8btE4tvrVtSO_4'; // Replace with your actual access token
+// const COMPANY_UUID = '689e95c7-ce43-49fe-8149-5be705615e76'; // Replace with your actual company UUID
+// const COMPANY_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}`;
+// const EMPLOYEES_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}/employees`;
+
+// app.use(cors());
+
+// // Endpoint to fetch company details
+// app.get('/company', async (req, res) => {
+//     try {
+//         const response = await axios.get(COMPANY_URL, {
+//             headers: {
+//                 'Authorization': `Bearer ${ACCESS_TOKEN}`
+//             }
+//         });
+//         res.json(response.data);
+//     } catch (error) {
+//         console.error('Error fetching company details:', error.response ? error.response.data : error.message);
+//         res.status(error.response ? error.response.status : 500).send('Failed to fetch company details');
+//     }
+// });
+
+// // Endpoint to fetch employee details
+// app.get('/employees', async (req, res) => {
+
+//     try {
+//         const response = await axios.get(EMPLOYEES_URL, {
+//             headers: {
+//                 'Authorization': `Bearer ${ACCESS_TOKEN}`
+//             }
+//         });
+
+//         res.json(response.data);
+//     } catch (error) {
+//         console.error('Error fetching employees:', error.response ? error.response.data : error.message);
+//         res.status(error.response ? error.response.status : 500).send('Failed to fetch employees');
+//     }
+// });
+
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// });
+//----------------------------------------------------------------------------------------------------------------

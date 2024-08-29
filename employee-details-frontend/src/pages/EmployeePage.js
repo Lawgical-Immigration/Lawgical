@@ -4,14 +4,6 @@ import {
   Container,
   TextField,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Checkbox,
 } from "@mui/material";
 import { Autocomplete } from "@mui/lab";
 import axios from "axios";
@@ -66,7 +58,6 @@ const EmployeeList = () => {
         .catch((error) => {
           alert("There was an error sending the email!", error);
           console.error("There was an error sending the email!", error);
-          console.log("email: ", email);
         });
     }
   };
@@ -173,94 +164,9 @@ const EmployeeList = () => {
           </div>
       </div>
       <AddEmployeeForm showForm={showForm} setShowForm={setShowForm} />
-      <TableContainer component={Paper} style={{ width: "100%" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-            <TableCell>Select</TableCell>
-              <TableCell>Last Name</TableCell>
-              <TableCell>First Name</TableCell>
-              <TableCell>Date of Birth</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Country</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {selectedNames.map((name, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Checkbox
-                    checked={checkedItems[name] || false}
-                    onChange={() => handleCheckboxChange(name)}
-                  />
-                </TableCell>
-                <TableCell>{name}</TableCell>
-                <TableCell>
-                  <Button
-                    onClick={() => handleStartImmigration(name)}
-                    disabled={!checkedItems[name]}
-                    variant="contained"
-                    color="primary"
-                    style={{ marginRight: "8px" }}
-                  >
-                    Start Immigration
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(name)}
-                    disabled={!checkedItems[name]}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <EmployeeTable />
     </Container>
   );
 };
 
 export default EmployeeList;
-
-// const [employees, setEmployees] = useState([]);
-
-// useEffect(() => {
-//     const fetchEmployeeDetails = async () => {
-//         try {
-//             const response = await axios.get('http://localhost:8000/employees');
-//             setEmployees(response.data);
-//         } catch (error) {
-//             console.error('Error fetching employee details:', error);
-//         }
-//     };
-
-//     fetchEmployeeDetails();
-// }, []);
-
-// if (employees.length === 0) {
-//     return <div>Loading...</div>;
-// }
-//{
-  /* <thead>
-                    <tr>
-                        <th>S.no</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees.map((employee, index) => (
-                        <tr key={employee.id}>
-                            <td>{index + 1}</td> 
-                            <td>{employee.first_name}</td>
-                            <td>{employee.last_name}</td>
-                            <td>{employee.email}</td>
-                        </tr>
-                    ))}
-                </tbody> */
-//}
