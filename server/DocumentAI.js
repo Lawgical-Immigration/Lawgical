@@ -9,14 +9,14 @@ const processorId = ''; // Create processor in Cloud Console
 const filePath = 'passport.pdf';
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 const {DocumentProcessorServiceClient} =
   require('@google-cloud/documentai').v1;
 const fs = require('fs').promises;
 //   // Instantiates a client
 //   // apiEndpoint regions available: eu-documentai.googleapis.com, us-documentai.googleapis.com (Required if using eu based processor)
-// const client = new DocumentProcessorServiceClient({apiEndpoint: 'eu-documentai.googleapis.com'});
-// const client = new DocumentProcessorServiceClient();
+//const client = new DocumentProcessorServiceClient({apiEndpoint: 'eu-documentai.googleapis.com'});
+const client = new DocumentProcessorServiceClient();
   
 async function quickstart() {
 //     // The full resource name of the processor, e.g.:
@@ -67,7 +67,8 @@ async function quickstart() {
   
 //     // Extracting specific fields
     const passportNumber = extractField('Passport No.');
-    const Name = extractField('Name');
+    const firstName = extractField('First Name');
+    const lastName = extractField('Last Name')
     const nationality = extractField('Nationality');
     const sex = extractField('Sex');
     const dateOfBirth = extractField('Date of birth');
@@ -77,7 +78,8 @@ async function quickstart() {
     // Printing extracted fields
     console.log('Extracted Passport Details:');
     console.log(`Passport Number: ${passportNumber}`);
-    console.log(`Name: ${Name}`);
+    console.log(`First Name: ${firstName}`);
+    console.log(`Last Name: ${lastName}`)
     console.log(`Nationality: ${nationality}`);
     console.log(`Sex: ${sex}`);
     console.log(`Date of Birth: ${dateOfBirth}`);
@@ -87,7 +89,8 @@ async function quickstart() {
 //     // Save the output to a file
     const output = `
       Passport Number: ${passportNumber}
-      Name: ${Name}
+      First Name: ${firstName}
+      Last Name: ${lastName}
       Nationality: ${nationality}
       Sex: ${sex}
       Date of Birth: ${dateOfBirth}

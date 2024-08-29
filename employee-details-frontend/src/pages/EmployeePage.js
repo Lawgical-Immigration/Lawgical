@@ -4,22 +4,19 @@ import {
   Container,
   TextField,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Checkbox,
 } from "@mui/material";
 import { Autocomplete } from "@mui/lab";
 import axios from "axios";
+
+import AddEmployeeForm from '../components/AddEmployeeForm';
+import EmployeeTable from "../components/EmployeeTable";
+
 const EmployeeList = () => {
-  const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [selectedNames, setSelectedNames] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
+  const [showForm, setShowForm] = useState(false);
+
   const names = [
     "Jessica",
     "Aksharika",
@@ -48,20 +45,12 @@ const EmployeeList = () => {
       )
     : [];
 
-  const handleToggleSearchBox = () => {
-    setShowSearchBox((prevState) => {
-      if (prevState) {
-        setSearchName("");
-      }
-      return !prevState;
-    });
-  };
 
   const handleStartImmigration = (name) => {
     if (checkedItems[name]) {
       const email = emailMap[name];
       axios
-        .post("http://localhost:5000/send-email", { name, email })
+        .post("http://localhost:5050/send-email", { name, email })
         .then((response) => {
           alert("Email sent successfully");
           console.log("Email sent:", response.data);
@@ -69,7 +58,6 @@ const EmployeeList = () => {
         .catch((error) => {
           alert("There was an error sending the email!", error);
           console.error("There was an error sending the email!", error);
-          console.log("email: ", email);
         });
     }
   };
@@ -137,7 +125,6 @@ const EmployeeList = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleToggleSearchBox}
           style={{
             backgroundColor: "#3f51b5",
             color: "white",
@@ -149,10 +136,12 @@ const EmployeeList = () => {
             textTransform: "none",
             marginRight: "16px",
           }}
+          onClick={() => {
+            setShowForm(true)
+          }}
         >
           Add Employee
         </Button>
-        {showSearchBox && (
           <div style={{ width: "30%" }}>
             <Autocomplete
               freeSolo
@@ -173,92 +162,11 @@ const EmployeeList = () => {
               style={{ width: "100%" }}
             />
           </div>
-        )}
       </div>
-      <TableContainer component={Paper} style={{ width: "100%" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Checkbox</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {selectedNames.map((name, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <Checkbox
-                    checked={checkedItems[name] || false}
-                    onChange={() => handleCheckboxChange(name)}
-                  />
-                </TableCell>
-                <TableCell>{name}</TableCell>
-                <TableCell>
-                  <Button
-                    onClick={() => handleStartImmigration(name)}
-                    disabled={!checkedItems[name]}
-                    variant="contained"
-                    color="primary"
-                    style={{ marginRight: "8px" }}
-                  >
-                    Start Immigration
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(name)}
-                    disabled={!checkedItems[name]}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <AddEmployeeForm showForm={showForm} setShowForm={setShowForm} />
+      <EmployeeTable />
     </Container>
   );
 };
 
 export default EmployeeList;
-
-// const [employees, setEmployees] = useState([]);
-
-// useEffect(() => {
-//     const fetchEmployeeDetails = async () => {
-//         try {
-//             const response = await axios.get('http://localhost:8000/employees');
-//             setEmployees(response.data);
-//         } catch (error) {
-//             console.error('Error fetching employee details:', error);
-//         }
-//     };
-
-//     fetchEmployeeDetails();
-// }, []);
-
-// if (employees.length === 0) {
-//     return <div>Loading...</div>;
-// }
-//{
-  /* <thead>
-                    <tr>
-                        <th>S.no</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees.map((employee, index) => (
-                        <tr key={employee.id}>
-                            <td>{index + 1}</td> 
-                            <td>{employee.first_name}</td>
-                            <td>{employee.last_name}</td>
-                            <td>{employee.email}</td>
-                        </tr>
-                    ))}
-                </tbody> */
-//}
