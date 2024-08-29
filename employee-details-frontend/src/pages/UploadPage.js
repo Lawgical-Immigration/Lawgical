@@ -48,7 +48,7 @@ const UploadPage = () => {
     formData.append("id", id); // Pass the unique ID
 
     try {
-      const response = await fetch(`http://localhost:5000/upload/${id}`, {
+      const response = await fetch(`http://localhost:5050/upload/${id}`, {
         method: "POST",
         body: formData,
       });
