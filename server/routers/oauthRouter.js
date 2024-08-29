@@ -16,7 +16,7 @@ router.get('/google/callback',
 );
 
 // Route to log out the user
-router.get('/logout', (req, res) => {
+router.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
