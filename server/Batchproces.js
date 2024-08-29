@@ -2,10 +2,12 @@ const { DocumentProcessorServiceClient } = require('@google-cloud/documentai').v
 const fs = require('fs');
 const path = require('path');
 const mime = require('mime-types');
+const dotenv = require('dotenv');
+dotenv.config();
+
 // Set up Document AI client
 const documentAIClient = new DocumentProcessorServiceClient();
-const serviceAccountPath = path.join(__dirname, 'GOOGLE_APPLICATION_CREDENTIALS');
-process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountPath;
+const serviceAccountPath = path.join(__dirname, process.env.GOOGLE_APPLICATION_CREDENTIALS);
 
 // Ensure the path is printed correctly for debugging
 console.log('Service account path:', serviceAccountPath);
@@ -23,9 +25,9 @@ async function processDocumentsInUploads() {
             const fileData = fs.readFileSync(filePath);
             console.log(fileData)  
             // Prepare the Document AI request
-            const projectId = 'PROJECT_ID';
+            const projectId = process.env.PROJECT_ID;
             const location = 'us'; // Adjust based on your setup
-            const processorId = 'PROCESS_ID';
+            const processorId = process.env.PROCESSOR_ID;
 
             const request = {
                 name: `projects/${projectId}/locations/${location}/processors/${processorId}`,
