@@ -1,0 +1,426 @@
+{
+  "filing_locations": [
+    {
+      "category": "CNMI Petitions",
+      "sections": [
+        {
+          "title": "E Applications (E-1, E-2, E-3)",
+          "applications": [
+            {
+              "type": "E-1 applications",
+              "description": "E-1 applications filed by an employer requesting an extension of stay or change of status.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 E-1, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 E-1, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 E-1 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 E-1 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            },
+            {
+              "type": "E-2 applications",
+              "description": "E-2 applications filed by an employer requesting an extension of stay or change of status.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 E-2, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 E-2, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 E-2 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 E-2 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            },
+            {
+              "type": "E-3 applications",
+              "description": "E-3 applications filed by an employer seeking an extension of stay or change of status on behalf of its workers.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 E-3, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 E-3, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 E-3 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 E-3 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "H-1B, H-1B2, and H-1B3 Petitions (Cap and Non-Cap) With a Concurrent Request for Premium Processing",
+          "applications": [
+            {
+              "primary_office_states": [
+                "Alabama", "Alaska", "Arizona", "Colorado", "Florida", "Georgia", "Guam", "Hawaii", "Idaho", "Iowa", "Louisiana", "Minnesota", "Mississippi", "Missouri", "Montana", "Nevada", "New Mexico", "Northern Mariana Islands", "Oregon", "Texas", "Utah", "Washington", "Wyoming"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Dallas Lockbox, Attn: Premium I-129 H-1B, P.O. Box 650679, Dallas, TX 75265-0679",
+                "courier": "USCIS Dallas Lockbox, Attn: Premium I-129 H-1B (Box 650679), 2501 S. State Hwy. 121, Business Suite 400, Lewisville, TX 75067-8003"
+              }
+            },
+            {
+              "primary_office_states": ["California", "Michigan"],
+              "filing_locations": {
+                "usps": "USCIS Phoenix Lockbox, Attn: Premium I-129 H-1B, P.O. Box 21509, Phoenix, AZ 85036-1509",
+                "courier": "USCIS Phoenix Lockbox, Attn: Premium I-129 H-1B (Box 21509), 2108 E. Elliot Rd., Tempe, AZ 85284-1806"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Arkansas", "Armed Forces", "Illinois", "Indiana", "Kansas", "Kentucky", "Nebraska", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Puerto Rico", "South Carolina", "South Dakota", "Tennessee", "U.S. Virgin Islands", "Virginia", "West Virginia", "Wisconsin"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Chicago Lockbox, Attn: Premium I-129 H-1B, P.O. Box 88781, Chicago, IL 60680-1781",
+                "courier": "USCIS Chicago Lockbox, Attn: Premium I-129 H-1B (Box 88781), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Connecticut", "Delaware", "District of Columbia", "Maine", "Maryland", "Massachusetts", "New Hampshire", "New Jersey", "New York", "Pennsylvania", "Rhode Island", "Vermont"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Elgin Lockbox, Attn: Premium I-129 H-1B, P.O. Box 4204, Carol Stream, IL 60197-4204",
+                "courier": "USCIS Elgin Lockbox, Attn: Premium I-129 H-1B (Box 4204), 2500 Westfield Drive, Elgin, IL 60124-7836"
+              }
+            }
+          ]
+        },
+        {
+          "title": "H-1B and H-1B3 Cap-Subject Petitions (Regular Cap and Advanced Degree Exemption) – Non-Premium",
+          "applications": [
+            {
+              "primary_office_states": [
+                "Alabama", "Arkansas", "Florida", "Georgia", "Iowa", "Louisiana", "Minnesota", "Mississippi", "Missouri", "Texas"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Dallas Lockbox, Attn: I-129 H-1B, P.O. Box 650542, Dallas, TX 75265-0542",
+                "courier": "USCIS Dallas Lockbox, Attn: I-129 H-1B (Box 650542), 2501 S. State Hwy. 121, Business Suite 400, Lewisville, TX 75067-8003"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Alaska", "Arizona", "California", "Colorado", "Guam", "Hawaii", "Idaho", "Kansas", "Michigan", "Montana", "Nebraska", "Nevada", "New Mexico", "North Dakota", "Northern Mariana Islands", "Oklahoma", "Oregon", "South Dakota", "Utah", "Washington", "Wyoming"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Phoenix Lockbox, Attn: I-129 H-1B, P.O. Box 20000, Phoenix, AZ 85036-0099",
+                "courier": "USCIS Phoenix Lockbox, Attn: I-129 H-1B (Box 20000), 2108 E. Elliot Rd., Tempe, AZ 85284-1806"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Armed Forces", "Illinois", "Indiana", "Kentucky", "North Carolina", "Ohio", "Puerto Rico", "South Carolina", "Tennessee", "U.S. Virgin Islands", "Virginia", "West Virginia", "Wisconsin"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Chicago Lockbox, Attn: I-129 H-1B, P.O. Box 88777, Chicago, IL 60680-1777",
+                "courier": "USCIS Chicago Lockbox, Attn: I-129 H-1B (Box 88777), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Connecticut", "Delaware", "District of Columbia", "Maine", "Maryland", "Massachusetts", "New Hampshire", "New Jersey", "New York", "Pennsylvania", "Rhode Island", "Vermont"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Elgin Lockbox, Attn: I-129 H-1B, P.O. Box 4016, Carol Stream, IL 60197-4016",
+                "courier": "USCIS Elgin Lockbox, Attn: I-129 H-1B (Box 4016), 2500 Westfield Drive, Elgin, IL 60124-7836"
+              }
+            }
+          ]
+        },
+        {
+          "title": "H-1B Cap-Exempt Petitioners or Entities – Non-Premium",
+          "applications": [
+            {
+              "primary_office_states": [
+                "Alabama", "Arkansas", "Florida", "Georgia", "Iowa", "Louisiana", "Minnesota", "Mississippi", "Missouri", "North Carolina", "Texas"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Dallas Lockbox, Attn: I-129 H-1B, P.O. Box 650542, Dallas, TX 75265-0542",
+                "courier": "USCIS Dallas Lockbox, Attn: I-129 H-1B (Box 650542), 2501 S. State Hwy. 121, Business Suite 400, Lewisville, TX 75067-8003"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Alaska", "Arizona", "California", "Colorado", "District of Columbia", "Guam", "Hawaii", "Idaho", "Kansas", "Michigan", "Montana", "Nebraska", "Nevada", "New Jersey", "New Mexico", "North Dakota", "Northern Mariana Islands", "Oklahoma", "Oregon", "South Dakota", "Utah", "Washington", "Wyoming"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Phoenix Lockbox, Attn: I-129 H-1B, P.O. Box 20000, Phoenix, AZ 85036-0099",
+                "courier": "USCIS Phoenix Lockbox, Attn: I-129 H-1B (Box 20000), 2108 E. Elliot Rd., Tempe, AZ 85284-1806"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Armed Forces", "Illinois", "Indiana", "Kentucky", "Ohio", "Puerto Rico", "South Carolina", "Tennessee", "U.S. Virgin Islands", "Virginia", "West Virginia", "Wisconsin"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Chicago Lockbox, Attn: I-129 H-1B, P.O. Box 88777, Chicago, IL 60680-1777",
+                "courier": "USCIS Chicago Lockbox, Attn: I-129 H-1B (Box 88777), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Connecticut", "Delaware", "Maine", "Maryland", "Massachusetts", "New Hampshire", "New York", "Pennsylvania", "Rhode Island", "Vermont"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Elgin Lockbox, Attn: I-129 H-1B, P.O. Box 4016, Carol Stream, IL 60197-4016",
+                "courier": "USCIS Elgin Lockbox, Attn: I-129 H-1B (Box 4016), 2500 Westfield Drive, Elgin, IL 60124-7836"
+              }
+            }
+          ]
+        },
+        {
+          "title": "H-1B Guam, H-1B Conrad/IGA, and H-1B2 Petitions – Non-Premium",
+          "applications": [
+            {
+              "primary_office_states": ["Any state"],
+              "filing_locations": {
+                "usps": "USCIS Elgin Lockbox, Attn: I-129 H-1B, P.O. Box 4016, Carol Stream, IL 60197-4016",
+                "courier": "USCIS Elgin Lockbox, Attn: I-129 H-1B (Box 4016), 2500 Westfield Drive, Elgin, IL 60124-7836"
+              }
+            }
+          ]
+        },
+        {
+          "title": "All Other H-1B, H-1B1 (HSC), and H-1B3 Petitions (extension of stay, change of status, concurrent employment, POE/PFI/consular notification, and amended petitions) – Non-Premium",
+          "applications": [
+            {
+              "primary_office_states": [
+                "Alabama", "Arkansas", "Florida", "Georgia", "Iowa", "Kansas", "Louisiana", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "New Mexico", "North Dakota", "Oklahoma", "Oregon", "South Dakota", "Texas", "Utah", "Washington", "Wyoming"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Dallas Lockbox, Attn: I-129 H-1B, P.O. Box 650542, Dallas, TX 75265-0542",
+                "courier": "USCIS Dallas Lockbox, Attn: I-129 H-1B (Box 650542), 2501 S. State Hwy. 121, Business Suite 400, Lewisville, TX 75067-8003"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Alaska", "Arizona", "California", "Colorado", "Guam", "Hawaii", "Idaho", "Michigan", "Nevada", "Northern Mariana Islands"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Phoenix Lockbox, Attn: I-129 H-1B, P.O. Box 20000, Phoenix, AZ 85036-0099",
+                "courier": "USCIS Phoenix Lockbox, Attn: I-129 H-1B (Box 20000), 2108 E. Elliot Rd., Tempe, AZ 85284-1806"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Armed Forces", "Illinois", "Indiana", "Kentucky", "North Carolina", "Ohio", "Puerto Rico", "South Carolina", "Tennessee", "U.S. Virgin Islands", "Virginia", "West Virginia", "Wisconsin"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Chicago Lockbox, Attn: I-129 H-1B, P.O. Box 88777, Chicago, IL 60680-1777",
+                "courier": "USCIS Chicago Lockbox, Attn: I-129 H-1B (Box 88777), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Connecticut", "Delaware", "District of Columbia", "Maine", "Maryland", "Massachusetts", "New Hampshire", "New Jersey", "New York", "Pennsylvania", "Rhode Island", "Vermont"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Elgin Lockbox, Attn: I-129 H-1B, P.O. Box 4016, Carol Stream, IL 60197-4016",
+                "courier": "USCIS Elgin Lockbox, Attn: I-129 H-1B (Box 4016), 2500 Westfield Drive, Elgin, IL 60124-7836"
+              }
+            }
+          ]
+        },
+        {
+          "title": "Form I-907 to Upgrade a Pending H-1B, H-1B2, or H-1B3 Petition",
+          "applications": [
+            {
+              "primary_office_states": [
+                "Alabama", "Alaska", "Arizona", "Colorado", "Florida", "Georgia", "Guam", "Hawaii", "Idaho", "Iowa", "Louisiana", "Minnesota", "Mississippi", "Missouri", "Montana", "Nevada", "New Mexico", "Northern Mariana Islands", "Oregon", "Texas", "Utah", "Washington", "Wyoming"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Dallas Lockbox, Attn: I-907, P.O. Box 650842, Dallas, TX 75265-0842",
+                "courier": "USCIS Dallas Lockbox, Attn: I-907 (Box 650842), 2501 S. State Hwy. 121, Business Suite 400, Lewisville, TX 75067-8003"
+              }
+            },
+            {
+              "primary_office_states": ["California", "Michigan"],
+              "filing_locations": {
+                "usps": "USCIS Phoenix Lockbox, Attn: I-907, P.O. Box 21300, Phoenix, AZ 85036-1300",
+                "courier": "USCIS Phoenix Lockbox, Attn: I-907 (Box 21300), 2108 E. Elliot Rd., Tempe, AZ 85284-1806"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Arkansas", "Armed Forces", "Illinois", "Indiana", "Kansas", "Kentucky", "Nebraska", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Puerto Rico", "South Carolina", "South Dakota", "Tennessee", "U.S. Virgin Islands", "Virginia", "West Virginia", "Wisconsin"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Chicago Lockbox, Attn: I-907, P.O. Box 805501, Chicago, IL 60680-5501",
+                "courier": "USCIS Chicago Lockbox, Attn: I-907 (Box 805501), 131 S. Dearborn St., 3rd Floor, Chicago, IL 60603-5517"
+              }
+            },
+            {
+              "primary_office_states": [
+                "Connecticut", "Delaware", "District of Columbia", "Maine", "Marshall Islands", "Maryland", "Massachusetts", "New Hampshire", "New Jersey", "New York", "Pennsylvania", "Rhode Island", "Vermont"
+              ],
+              "filing_locations": {
+                "usps": "USCIS Elgin Lockbox, Attn: I-907, P.O. Box 4200, Carol Stream, IL 60197-4200",
+                "courier": "USCIS Elgin Lockbox, Attn: I-907 (Box 4200), 2500 Westfield Drive, Elgin, IL 60124-7836"
+              }
+            }
+          ]
+        },
+        {
+          "title": "H-2 and H-3 Petitions (H-2A, H-2B, H-3)",
+          "applications": [
+            {
+              "type": "H-2A petitions",
+              "description": "H-2A petitions where the beneficiary will be employed as a temporary agricultural worker.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 H2A, 6046 N Belt Line Rd, STE 117, Irving, TX 75038-0018",
+                "courier": "USCIS Texas Service Center, Attn: I-129 H2A, 6046 N Belt Line Rd. STE 117, Irving, TX 75038-0001"
+              }
+            },
+            {
+              "type": "H-2B petitions (not including H-2B Guam petitions)",
+              "description": "H-2B petitions where the beneficiary will be employed as a temporary non-agricultural worker.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 H2B, 6046 N Belt Line Rd. STE 118, Irving, TX 75038-0018",
+                "courier": "USCIS Texas Service Center, Attn: I-129 H2B, 6046 N Belt Line Rd. STE 118, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 H2B Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 H2B Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            },
+            {
+              "type": "H-2B Guam petitions",
+              "description": "H-2B petitions where the beneficiary will be performing labor or services in Guam.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 H2B Guam, 6046 N Belt Line Rd. STE 118, Irving, TX 75038-0018",
+                "courier": "USCIS Texas Service Center, Attn: I-129 H2B Guam, 6046 N Belt Line Rd. STE 118, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 H2B Guam Premium Processing, 6046 N Belt Line Rd, STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 H2B Guam Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            },
+            {
+              "type": "H-3 petitions",
+              "description": "H-3 petitions filed by employers for beneficiaries who are trainees or special education exchange visitors.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 H-3, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 H-3, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 H-3 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 H-3 Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "L Petitions (L-1A, L-1B, LZ)",
+          "applications": [
+            {
+              "type": "L petitions",
+              "description": "Includes petitions filed for L-1A, L-1B, and LZ (Blanket L-1).",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 L, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 L, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, ATTN: I-129 L Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 L Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "O Petitions (O-1A, O-1B, O-2)",
+          "applications": [
+            {
+              "type": "O petitions",
+              "description": "Includes petitions filed for O-1A, O-1B, and O-2. You may pay with a credit card.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 O, 6046 N Belt Line Rd. STE 115, Irving, TX 75038-0018",
+                "courier": "USCIS Texas Service Center, Attn: I-129 O, 6046 N Belt Line Rd. STE 115, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 O Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 O Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "P Petitions (P-1, P-1A, P-1B, P-1S, P-2, P-2S, P-3, P-3S)",
+          "applications": [
+            {
+              "type": "P-1A or P-1S major league sports organization petitions",
+              "description": "Currently, we only consider the NHL, MLB, NFL, NBA and MLS to be major league sports for the purpose of filing jurisdiction. You may pay with a credit card.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 P, 6046 N Belt Line Rd. STE 115, Irving, TX 75038-0018",
+                "courier": "USCIS Texas Service Center, Attn: I-129 P, 6046 N Belt Line Rd. STE 115, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 P Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 P Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            },
+            {
+              "type": "All other P petitions",
+              "description": "Includes petitions filed for P-1A athlete or athletic group other than major league sports, P-1B, P-1S, P-2, P-2S, P-3 and P-3S. You may pay with a credit card.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 P, 6046 N Belt Line Rd. STE 115, Irving, TX 75038-0018",
+                "courier": "USCIS Texas Service Center, Attn: I-129 P, 6046 N Belt Line Rd. STE 115, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 P Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 P Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "Q-1 Petitions",
+          "applications": [
+            {
+              "type": "Q-1 petitions",
+              "description": "Q-1 petitions filed by an employer for a beneficiary who will participate in an international cultural exchange program.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 Q, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 Q, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 Q Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 Q Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "R-1 Petitions",
+          "applications": [
+            {
+              "type": "R-1 petitions",
+              "description": "R-1 petitions filed by an employer for a beneficiary who will be employed as a minister or in a religious occupation or vocation.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 R, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 R, 6046 N Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 R Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 R Premium Processing, 6046 N Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "title": "TN Free Trade Petitions (TN-1, TN-2)",
+          "applications": [
+            {
+              "type": "TN free trade petitions",
+              "description": "TN-1 and TN-2 petitions requesting an extension of stay or change of status, or a TN-1 application filed on behalf of a Canadian citizen who is outside of the United States.",
+              "filing_locations": {
+                "usps": "USCIS Texas Service Center, Attn: I-129 TN, 6046 N. Belt Line Rd. STE 129, Irving, TX 75038-0013",
+                "courier": "USCIS Texas Service Center, Attn: I-129 TN, 6046 N. Belt Line Rd. STE 129, Irving, TX 75038-0001",
+                "premium_processing": {
+                  "usps": "USCIS Texas Service Center, Attn: I-129 TN Premium Processing, 6046 N. Belt Line Rd. STE 907, Irving, TX 75038-0022",
+                  "courier": "USCIS Texas Service Center, Attn: I-129 TN Premium Processing, 6046 N. Belt Line Rd. STE 907, Irving, TX 75038-0001"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
