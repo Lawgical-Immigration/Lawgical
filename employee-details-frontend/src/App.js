@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import EmployeeList from './EmployeeList'; // Make sure the path is correct
+import EmployeeList from './pages/EmployeeList'; // Make sure the path is correct
 import UploadPage from './pages/UploadPage'; // Make sure the path is correct
 
 function App() {
