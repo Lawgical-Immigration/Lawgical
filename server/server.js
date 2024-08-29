@@ -14,7 +14,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const http = require("http");
 const socketIo = require('socket.io');
-const setupWebSocket = require('./chatbotWebSocket');
+const setupWebSocket = require('../chatbotWebSocket');
 const mongoose = require("mongoose");
 mongoose.connect(process.env.MDB_URI, {
   useNewUrlParser: true,
@@ -25,9 +25,11 @@ mongoose.connection.once("open", () => {
   console.log("Connected to database");
 });
 
-const User = require("./employee-details-frontend/src/Models/userModel");
-const Conversation = require("./employee-details-frontend/src/Models/conversationModel");
-const Message = require("./employee-details-frontend/src/Models/messageModel");
+const User = require("./models/userModel");
+const Conversation = require("./models/conversationModel");
+const Message = require("./models/messageModel");
+
+const employeeRouter = require('./routers/employeeRouter')
 
 const app = express();
 const PORT = process.env.PORT || 5050;

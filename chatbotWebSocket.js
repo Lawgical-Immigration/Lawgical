@@ -1,7 +1,7 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const dotenv = require("dotenv");
 const socketIo = require("socket.io");
-const Message = require("./employee-details-frontend/src/Models/messageModel");
+const Message = require("./server/models/employeeModel");
 const path = require("path");
 const fs = require("fs");
 
