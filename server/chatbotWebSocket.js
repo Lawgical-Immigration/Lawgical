@@ -4,6 +4,7 @@ const socketIo = require("socket.io");
 const Message = require("./models/messageModel");
 const path = require("path");
 const fs = require("fs");
+const supabase = require('../database/dbConfig')
 
 dotenv.config();
 const accessToken = process.env.GEMINI_API_KEY;
@@ -54,24 +55,41 @@ const chatbotWebSocket = (server) => {
       console.log("received sendMessage event and data is: ", data);
       const { convoID, sender, content } = data;
 
-      // post message to database
-      await Message.create({
-        conversation: convoID,
-        sender,
-        content,
-      });
+
+      const { data1, error } = await supabase
+        .from("messages")
+        .insert([
+          {
+            conversation_id: convoID,
+            sender: sender,
+            content: content
+          }
+        ])
+      if (error) {
+        console.log("Error inserting message: ", error)
+      } else {
+        console.log("Message inserted successfully: ", data1)
+      }
+
       const botResponse = await generateText(content);
       console.log("botResponse: ", botResponse);
 
       if (botResponse) {
         try {
-          const message = await Message.create({
-            conversation: convoID,
-            sender: "bot",
-            content: botResponse,
-          });
-          console.log("message that is being sent: ", message);
-          io.to(convoID).emit("receiveMessage", message);
+          const { data2, error } = await supabase
+            .from("messages")
+            .insert([
+              {
+                conversation_id: convoID,
+                sender: "bot",
+                content: botResponse
+              }
+            ])
+          if (error) console.log("error occured while adding bot response to messages table: ", error)
+          else {
+            console.log("Bot message inserted successfully: ", data2);
+          }
+          io.to(convoID).emit("receiveMessage", data2);
         } catch (err) {
           console.log("failed to create message from bot response");
         }
