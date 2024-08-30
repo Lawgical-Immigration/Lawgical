@@ -14,19 +14,8 @@ dotenv.config();
 const http = require("http");
 const socketIo = require('socket.io');
 const setupWebSocket = require('../chatbotWebSocket');
-const mongoose = require("mongoose");
-mongoose.connect(process.env.MDB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const pool = require('../database/dbConfig')
 
-mongoose.connection.once("open", () => {
-  console.log("Connected to database");
-});
-
-const User = require("./models/userModel");
-const Conversation = require("./models/conversationModel");
-const Message = require("./models/messageModel");
 
 const employeeRouter = require('./routers/employeeRouter')
 
@@ -70,13 +59,16 @@ app.use('/employee', employeeRouter);
 
 app.post("/send-email", async (req, res) => {
   const { firstName, lastName, email } = req.body;
-  const employee =
-    (await User.findOne({ firstName, email })) ||
-    (await User.create({
-      firstName,
-      email,
-      id: crypto.randomBytes(16).toString("hex"),
-    }));
+  try {
+    
+  }
+  // const employee =
+  //   (await User.findOne({ firstName, email })) ||
+  //   (await User.create({
+  //     firstName,
+  //     email,
+  //     id: crypto.randomBytes(16).toString("hex"),
+  //   }));
   const uniqueId = employee.employeeId;
   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
   console.log("employee: ", employee);
