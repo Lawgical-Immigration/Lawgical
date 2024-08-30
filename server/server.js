@@ -1,7 +1,6 @@
 // Main server file for the Lawgical application. It handles various functionalities such as sending emails, uploading files, processing passports, and filling PDF forms. It uses various libraries like express, nodemailer, multer, aws-sdk, and pdf-lib. The server listens on a specific port and handles HTTP requests.
 const express = require("express");
 const nodemailer = require("nodemailer");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const crypto = require("crypto");
 const multer = require("multer");
@@ -36,7 +35,7 @@ const PORT = process.env.PORT || 5050;
 const server = http.createServer(app);
 setupWebSocket(server);
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors())
 
 // Configure nodemailer
@@ -363,8 +362,6 @@ server.listen(PORT, () => {
 // const PORT = process.env.PORT || 8000;
 
 // // Store your access token and company UUID
-// const ACCESS_TOKEN = '2K0JR-d3lSvWm3DvHKL5jY1qAlZjW8btE4tvrVtSO_4'; // Replace with your actual access token
-// const COMPANY_UUID = '689e95c7-ce43-49fe-8149-5be705615e76'; // Replace with your actual company UUID
 // const COMPANY_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}`;
 // const EMPLOYEES_URL = `https://api.gusto-demo.com/v1/companies/${COMPANY_UUID}/employees`;
 
