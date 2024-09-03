@@ -14,21 +14,12 @@ dotenv.config();
 const http = require("http");
 const socketIo = require('socket.io');
 const setupWebSocket = require('../chatbotWebSocket');
-const mongoose = require("mongoose");
-mongoose.connect(process.env.MDB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-mongoose.connection.once("open", () => {
-  console.log("Connected to database");
-});
-
-const User = require("./models/userModel");
-const Conversation = require("./models/conversationModel");
-const Message = require("./models/messageModel");
+const pool = require('../database/dbConfig');
+const passport = require('passport');
+const session = require('express-session');
 
 const employeeRouter = require('./routers/employeeRouter')
+const oauthRouter = require('./routers/oauthRouter');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -38,6 +29,18 @@ setupWebSocket(server);
 app.use(express.json());
 app.use(cors())
 
+app.use(session({
+  secret: process.env.SESSION_SECRET, 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
+app.use(express.static(path.join(__dirname, '../employee-details-frontend/public')));
+
+//passport initialized
+app.use(passport.initialize());
+app.use(passport.session());
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -67,43 +70,47 @@ const upload = multer({ storage: storage });
 // In-memory store for email addresses
 
 app.use('/employee', employeeRouter);
+app.use('/oauth', oauthRouter);
 
-app.post("/send-email", async (req, res) => {
-  const { firstName, lastName, email } = req.body;
-  const employee =
-    (await User.findOne({ firstName, email })) ||
-    (await User.create({
-      firstName,
-      email,
-      id: crypto.randomBytes(16).toString("hex"),
-    }));
-  const uniqueId = employee.employeeId;
-  const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
-  console.log("employee: ", employee);
-  const mailOptions = {
-    from: "lawgical.immigration@gmail.com",
-    to: email,
-    subject: "🎉 Congratulations! Let’s Get Started on Your Visa Application!",
-    text: `Hello ${firstName},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
-  };
-  try {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return res.status(500).send(error.toString());
-      }
-      res
-        .status(200)
-        .send(
-          "Email sent: " +
-            info.response +
-            " and employee created in the database: " +
-            employee
-        );
-    });
-  } catch (err) {
-    res.status(500);
-  }
-});
+// app.post("/send-email", async (req, res) => {
+//   const { firstName, lastName, email } = req.body;
+//   try {
+    
+//   }
+//   // const employee =
+//   //   (await User.findOne({ firstName, email })) ||
+//   //   (await User.create({
+//   //     firstName,
+//   //     email,
+//   //     id: crypto.randomBytes(16).toString("hex"),
+//   //   }));
+//   const uniqueId = employee.employeeId;
+//   const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
+//   console.log("employee: ", employee);
+//   const mailOptions = {
+//     from: "lawgical.immigration@gmail.com",
+//     to: email,
+//     subject: "🎉 Congratulations! Let’s Get Started on Your Visa Application!",
+//     text: `Hello ${firstName},\n\nGreat news! Your employer is excited to sponsor your visa! 🎉Ready to begin? Click the link below to start your immigration journey:\n\n${uploadLink}\n\nWe’re here to make this process as smooth and easy as possible. If you have any questions along the way, you can chat 24/7 with an immigration expert. While you wait, our AI will provide you with quick answers.\n\nBest regards,\nTeam Lawgical.`,
+//   };
+//   try {
+//     transporter.sendMail(mailOptions, (error, info) => {
+//       if (error) {
+//         return res.status(500).send(error.toString());
+//       }
+//       res
+//         .status(200)
+//         .send(
+//           "Email sent: " +
+//             info.response +
+//             " and employee created in the database: " +
+//             employee
+//         );
+//     });
+//   } catch (err) {
+//     res.status(500);
+//   }
+// });
 
 app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
   if (!req.file) {
