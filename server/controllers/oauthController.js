@@ -4,6 +4,7 @@ require('dotenv').config();
 
 const supabase = require('../db/supabase');
 
+// Configure Passport.js to use Google OAuth strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -30,7 +31,7 @@ passport.use(
 
         if (employee) {
           // If employee exists, proceed
-          done(null, employee);
+          return done(null, employee);
         } else {
           // Check if an employee with the same email exists
           let { data: existingEmployee, error } = await supabase
@@ -53,7 +54,7 @@ passport.use(
 
             if (error) throw error;
 
-            done(null, updatedEmployee);
+            return done(null, updatedEmployee);
           } else {
             // Insert a new employee into the database
             let { data: newEntry, error } = await supabase
@@ -64,21 +65,23 @@ passport.use(
 
             if (error) throw error;
 
-            done(null, newEntry);
+            return done(null, newEntry);
           }
         }
       } catch (err) {
-        console.error(err);
-        done(err, null);
+        console.error('Error during OAuth process:', err);
+        return done(err, null);
       }
     }
   )
 );
 
+// Serialize the employee's ID into the session
 passport.serializeUser((employee, done) => {
   done(null, employee.employee_id);
 });
 
+// Deserialize the employee from the session using the ID
 passport.deserializeUser(async (id, done) => {
   try {
     let { data: employee, error } = await supabase
@@ -91,7 +94,7 @@ passport.deserializeUser(async (id, done) => {
 
     done(null, employee);
   } catch (err) {
-    console.error(err);
+    console.error('Error during deserialization:', err);
     done(err, null);
   }
 });
