@@ -7,7 +7,7 @@ require('dotenv').config();
 
 // Create a new PostgreSQL client using your Supabase credentials
 const client = new Client({
-  connectionString: ''
+  connectionString: 'postgresql://postgres.rtablgykpenwdujeiqgn:wqqfXVOq3L3HCYaQ@aws-0-us-west-1.pooler.supabase.com:6543/postgres'
 });
 
 async function runSQLFile() {
