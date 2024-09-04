@@ -11,7 +11,7 @@ CREATE TABLE employees (
 CREATE TABLE conversations (
   conversation_id SERIAL PRIMARY KEY,
   employee_id INT NOT NULL REFERENCES employees(employee_id),
-  startTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  start_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE messages (
@@ -19,6 +19,6 @@ CREATE TABLE messages (
   conversation_id INT NOT NULL REFERENCES conversations(conversation_id),
   sender VARCHAR(100) NOT NULL,
   content TEXT NOT NULL,
-  startTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  start_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 
