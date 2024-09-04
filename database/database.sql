@@ -1,5 +1,6 @@
 CREATE TABLE employees (
-  employee_id SERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
+  employee_id VARCHAR(255) UNIQUE NOT NULL,
   _status VARCHAR(50) DEFAULT 'Not Started',
   first_name VARCHAR(100) NOT NULL,
   last_name VARCHAR(100) NOT NULL,
@@ -19,7 +20,7 @@ BEGIN
    NEW.updated_at = NOW();
    RETURN NEW;
 END;
-$$ language 'plpgsql';
+$$ LANGUAGE 'plpgsql';
 
 CREATE TRIGGER update_employees_updated_at
 BEFORE UPDATE ON employees
@@ -28,7 +29,7 @@ EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TABLE conversations (
   conversation_id SERIAL PRIMARY KEY,
-  employee_id INT NOT NULL REFERENCES employees(employee_id),
+  employee_id VARCHAR(255) NOT NULL REFERENCES employees(employee_id),
   start_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
