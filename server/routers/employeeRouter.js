@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
-const { getEmployee, addEmployee} = require('../controllers/employeeController');
+const { getAllEmployees, addEmployee} = require('../controllers/employeeController');
 
-router.get('/', getEmployee, (_, res) => {
+router.get('/', getAllEmployees, (_, res) => {
   return res.status(200).json(res.locals.employeeList);
 })
 

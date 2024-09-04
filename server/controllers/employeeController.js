@@ -4,15 +4,16 @@ const crypto = require("crypto");
 
 const employeeController = {
 
-  getEmployeeId: async(req, res, next) => {
+  getEmployeeInfo: async(req, res, next) => {
     const { firstName, lastName, email } = req.body;
+    const { uniqueId } = req.params;
 
-    const { data, error } = await supabase.from('employees').select('employee_id').eq('first_name', firstName).eq('last_name', lastName).eq('email', email);
+    const { data, error } = await supabase.from('employees').select().or(`and.first_name.eq.${firstName},last_name.eq.${lastName},email.eq.${email},or.employee_id.eq.${uniqueId}`);
 
     if(error) {
       return next({
         log: `Error in employeeController.getEmployeeId middleware. ERR: ${error}`,
-        message: {err: 'Error fetching employee ID. See server log for details.'}
+        message: {err: 'Error fetching employee data. See server log for details.'}
       })
     } else if(data.length === 0) {
       return next({
@@ -21,13 +22,13 @@ const employeeController = {
         message: {err: 'Employee not found. Please try again.'}
       })
     } else {
-      const employeeId = data[0].employee_id;
-      res.locals = employeeId;
+      const employee = data[0];
+      res.locals = employee;
       return next();
     }
   },
 
-  getAllEmployees: async(req, res, next) => {
+  getAllEmployees: async(_, res, next) => {
 
     const { data, error } = await supabase.from('employees').select('_status, first_name, last_name, dob, email, country');
 
@@ -51,6 +52,7 @@ const employeeController = {
       const tempId = crypto.randomBytes(16).toString('hex');
       
       const { data, error } = await supabase.from('employees').select().eq('employee_id', tempId);
+      console.log('data: ', data, 'error: ', error)
 
       if(data.length === 0) empId = tempId;
     };
@@ -65,7 +67,6 @@ const employeeController = {
       })
     } else {
       res.locals.newEmployeeName = `${firstName} ${lastName}`;
-  
       return next();
     }
   }

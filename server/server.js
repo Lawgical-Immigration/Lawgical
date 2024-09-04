@@ -14,10 +14,11 @@ dotenv.config();
 const http = require("http");
 const socketIo = require('socket.io');
 const setupWebSocket = require('../chatbotWebSocket');
-const pool = require('../database/dbConfig')
+const supabase = require('../database/dbConfig')
 
 
-const employeeRouter = require('./routers/employeeRouter')
+const employeeRouter = require('./routers/employeeRouter');
+const { getEmployeeInfo } = require('./controllers/employeeController');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -25,7 +26,7 @@ const server = http.createServer(app);
 setupWebSocket(server);
 
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
@@ -57,21 +58,12 @@ const upload = multer({ storage: storage });
 
 app.use('/employee', employeeRouter);
 
-app.post("/send-email", async (req, res) => {
-  const { firstName, lastName, email } = req.body;
-  try {
-    
-  }
-  // const employee =
-  //   (await User.findOne({ firstName, email })) ||
-  //   (await User.create({
-  //     firstName,
-  //     email,
-  //     id: crypto.randomBytes(16).toString("hex"),
-  //   }));
-  const uniqueId = employee.employeeId;
-  const uploadLink = `http://localhost:3000/upload/${uniqueId}`;
-  console.log("employee: ", employee);
+app.post("/send-email", getEmployeeInfo, async (req, res) => {
+  const { firstName, email } = req.body;
+
+  const { employee_id } = res.locals.employee;
+  const uploadLink = `http://localhost:3000/upload/${employee_id}`;
+
   const mailOptions = {
     from: "lawgical.immigration@gmail.com",
     to: email,
@@ -87,24 +79,21 @@ app.post("/send-email", async (req, res) => {
         .status(200)
         .send(
           "Email sent: " +
-            info.response +
-            " and employee created in the database: " +
-            employee
+            info.response
         );
     });
   } catch (err) {
-    res.status(500);
+    res.sendStatus(500);
   }
 });
 
-app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
+app.post("/upload/:uniqueId", upload.single("file"), getEmployeeInfo, async (req, res, next) => {
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
-  const { uniqueId } = req.params;
-  const employeeDoc = await User.findOne({ id: uniqueId });
-  const email = employeeDoc && employeeDoc.email;
-  console.log("id: ", uniqueId);
+
+  const { employee_id, email } = res.locals.employee;
+  console.log("id: ", employee_id);
   console.log("email is : ", email);
   try {
     const filePath = req.file.path;
@@ -165,19 +154,8 @@ app.post("/upload/:uniqueId", upload.single("file"), async (req, res) => {
   }
 });
 
-app.get("/api/user/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findOne({ id });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    console.log("successfully fetched user: ", user)
-    res.status(200).json(user);
-  } catch (err) {
-    console.error("Error fetching user:", err);
-    res.status(500).json({ message: "Server error", err });
-  }
+app.get("/api/user/:uniqueId", getEmployeeInfo, async (req, res) => {
+  return res.status(200).json(res.locals.employee)
 });
 
 
