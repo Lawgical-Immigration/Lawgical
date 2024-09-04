@@ -1,56 +1,100 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const Employee = require('../models/employeeModel'); // Use the updated Employee model
-
 require('dotenv').config();
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback'
-},
-async (accessToken, refreshToken, profile, done) => {
-  const newEmployee = {
-    googleId: profile.id,
-    displayName: profile.displayName,
-    firstName: profile.name.givenName,
-    lastName: profile.name.familyName,
-    image: profile.photos[0].value,
-    email: profile.emails[0].value,
-  };
+const supabase = require('../db/supabase');
 
-  try {
-    let employee = await Employee.findOne({ googleId: profile.id });
+// Configure Passport.js to use Google OAuth strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: '/auth/google/callback',
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      const newEmployee = {
+        google_id: profile.id,
+        first_name: profile.name.givenName,
+        last_name: profile.name.familyName,
+        profile_picture_url: profile.photos[0].value,
+        email: profile.emails[0].value,
+      };
 
-    if (employee) {
-      // If employee already exists, proceed
-      done(null, employee);
-    } else {
-      // Check if the employee with the same email exists
-      employee = await Employee.findOne({ email: profile.emails[0].value });
+      try {
+        // Check if employee exists by google_id
+        let { data: employee, error } = await supabase
+          .from('employees')
+          .select('*')
+          .eq('google_id', profile.id)
+          .single();
 
-      if (employee) {
-        // If an employee with the same email exists, update their Google details
-        employee.googleId = profile.id;
-        employee.displayName = profile.displayName;
-        employee.image = profile.photos[0].value;
-        await employee.save();
-        done(null, employee);
-      } else {
-        // If no employee exists with that email, create a new employee entry
-        employee = await Employee.create(newEmployee);
-        done(null, employee);
+        if (employee) {
+          // If employee exists, proceed
+          return done(null, employee);
+        } else {
+          // Check if an employee with the same email exists
+          let { data: existingEmployee, error } = await supabase
+            .from('employees')
+            .select('*')
+            .eq('email', profile.emails[0].value)
+            .single();
+
+          if (existingEmployee) {
+            // Update the existing employee with Google details
+            let { data: updatedEmployee, error } = await supabase
+              .from('employees')
+              .update({
+                google_id: profile.id,
+                profile_picture_url: profile.photos[0].value,
+              })
+              .eq('email', profile.emails[0].value)
+              .select('*')
+              .single();
+
+            if (error) throw error;
+
+            return done(null, updatedEmployee);
+          } else {
+            // Insert a new employee into the database
+            let { data: newEntry, error } = await supabase
+              .from('employees')
+              .insert([newEmployee])
+              .select('*')
+              .single();
+
+            if (error) throw error;
+
+            return done(null, newEntry);
+          }
+        }
+      } catch (err) {
+        console.error('Error during OAuth process:', err);
+        return done(err, null);
       }
     }
-  } catch (err) {
-    console.error(err);
-  }
-}));
+  )
+);
 
+// Serialize the employee's ID into the session
 passport.serializeUser((employee, done) => {
-  done(null, employee.id);
+  done(null, employee.employee_id);
 });
 
-passport.deserializeUser((id, done) => {
-  Employee.findById(id, (err, employee) => done(err, employee));
+// Deserialize the employee from the session using the ID
+passport.deserializeUser(async (id, done) => {
+  try {
+    let { data: employee, error } = await supabase
+      .from('employees')
+      .select('*')
+      .eq('employee_id', id)
+      .single();
+
+    if (error) throw error;
+
+    done(null, employee);
+  } catch (err) {
+    console.error('Error during deserialization:', err);
+    done(err, null);
+  }
 });

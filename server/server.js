@@ -15,6 +15,8 @@ const http = require("http");
 const socketIo = require('socket.io');
 const setupWebSocket = require('../chatbotWebSocket');
 const supabase = require('../database/dbConfig')
+const session = require("express-session");
+const passport = require("passport");
 
 
 const employeeRouter = require('./routers/employeeRouter');
@@ -28,6 +30,18 @@ setupWebSocket(server);
 app.use(express.json());
 app.use(cors());
 
+app.use(session({
+  secret: process.env.SESSION_SECRET, 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
+app.use(express.static(path.join(__dirname, '../employee-details-frontend/public')));
+
+//passport initialized
+app.use(passport.initialize());
+app.use(passport.session());
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
