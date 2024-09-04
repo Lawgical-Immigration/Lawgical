@@ -1,33 +1,33 @@
 const express = require('express');
 const passport = require('passport');
+
 const router = express.Router();
 
-// Route to initiate Google OAuth
-router.get('/google',
+// Route to start the Google OAuth process
+router.get(
+  '/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-// Google OAuth callback route
-router.get('/google/callback',
+// Google callback route after authentication
+router.get(
+  '/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    res.redirect('/'); // Redirect to home or dashboard
+    // Successful authentication, redirect to the dashboard or desired page
+    res.redirect('/dashboard');
   }
 );
 
 // Route to log out the user
-router.get('/logout', (req, res, next) => {
+router.get('/logout', (req, res) => {
   req.logout((err) => {
     if (err) {
-      return next(err);
+      console.error(err);
+      return res.redirect('/'); // Redirect to the home page on error
     }
-    res.redirect('/');
+    res.redirect('/'); // Redirect to the home page after logout
   });
-});
-
-// Route to get the currently authenticated user
-router.get('/user', (req, res) => {
-  res.send(req.user);
 });
 
 module.exports = router;

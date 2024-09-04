@@ -15,6 +15,9 @@ const http = require("http");
 const socketIo = require('socket.io');
 const setupWebSocket = require('./chatbotWebSocket');
 const mongoose = require("mongoose");
+const session = require("express-session");
+const passport = require("passport");
+
 mongoose.connect(process.env.MDB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -29,6 +32,7 @@ const Conversation = require("./models/conversationModel");
 const Message = require("./models/messageModel");
 
 const employeeRouter = require('./routers/employeeRouter')
+const oauthRouter = require('./routers/oauthRouter');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -38,6 +42,18 @@ setupWebSocket(server);
 app.use(express.json());
 app.use(cors())
 
+app.use(session({
+  secret: process.env.SESSION_SECRET, 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
+app.use(express.static(path.join(__dirname, '../employee-details-frontend/public')));
+
+//passport initialized
+app.use(passport.initialize());
+app.use(passport.session());
 // Configure nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
