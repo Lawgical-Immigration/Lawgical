@@ -2,7 +2,6 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
 const cors = require("cors");
-const crypto = require("crypto");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -14,7 +13,6 @@ dotenv.config();
 const http = require("http");
 const socketIo = require('socket.io');
 const setupWebSocket = require('../chatbotWebSocket');
-const supabase = require('../database/dbConfig')
 const session = require("express-session");
 const passport = require("passport");
 
