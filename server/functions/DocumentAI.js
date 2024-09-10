@@ -7,9 +7,6 @@ const projectId = '';
 const location = 'us'; // Format is 'us' or 'eu'
 const processorId = ''; // Create processor in Cloud Console
 const filePath = 'passport.pdf';
-const express = require('express');
-const app = express();
-const PORT = process.env.PORT || 5050;
 const {DocumentProcessorServiceClient} =
   require('@google-cloud/documentai').v1;
 const fs = require('fs').promises;
@@ -17,7 +14,7 @@ const fs = require('fs').promises;
 //   // apiEndpoint regions available: eu-documentai.googleapis.com, us-documentai.googleapis.com (Required if using eu based processor)
 //const client = new DocumentProcessorServiceClient({apiEndpoint: 'eu-documentai.googleapis.com'});
 const client = new DocumentProcessorServiceClient();
-  
+
 async function quickstart() {
 //     // The full resource name of the processor, e.g.:
 //     // projects/project-id/locations/location/processor/processor-id
