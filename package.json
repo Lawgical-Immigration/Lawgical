@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/server.js",
+    "start": "nodemon server/server.js",
     "build": "cd employee-details-frontend && npm install && npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -20,6 +20,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@google-cloud/documentai": "^8.8.0",
+    "@google-cloud/storage": "^7.12.1",
     "@google/generative-ai": "^0.15.0",
     "@supabase/supabase-js": "^2.45.3",
     "@testing-library/jest-dom": "^5.17.0",
@@ -38,6 +39,7 @@
     "mongoose": "^8.4.4",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.14",
+    "nodemon": "^3.1.4",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "path": "^0.12.7",
