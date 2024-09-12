@@ -1,8 +1,9 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-require('dotenv').config();
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+require("dotenv").config();
 
-const supabase = require('../db/supabase');
+const { supabaseSecret } = require("../../database/dbConfig");
+const { encryptData } = require("../cryptofile");
 
 // Configure Passport.js to use Google OAuth strategy
 passport.use(
@@ -10,7 +11,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback',
+      callbackURL: "/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       const newEmployee = {
@@ -22,11 +23,12 @@ passport.use(
       };
 
       try {
-        // Check if employee exists by google_id
-        let { data: employee, error } = await supabase
-          .from('employees')
-          .select('*')
-          .eq('google_id', profile.id)
+        const encryptedProfileID = await encryptData(profile.id);
+        console.log("encyptedProfilID: ", encryptedProfileID);
+        let { data: employee, error } = await supabaseSecret
+          .from("employees")
+          .select("*")
+          .eq("google_id", encryptedProfileID)
           .single();
 
         if (employee) {
@@ -34,22 +36,24 @@ passport.use(
           return done(null, employee);
         } else {
           // Check if an employee with the same email exists
-          let { data: existingEmployee, error } = await supabase
-            .from('employees')
-            .select('*')
-            .eq('email', profile.emails[0].value)
+          const encryptedEmail = await encryptData(profile.emails[0].value);
+          let { data: existingEmployee, error } = await supabaseSecret
+            .from("employees")
+            .select("*")
+            .eq("email", encryptedEmail)
             .single();
 
           if (existingEmployee) {
             // Update the existing employee with Google details
-            let { data: updatedEmployee, error } = await supabase
-              .from('employees')
+            const encryptedPhoto = await encryptData(profile.photos[0].value);
+            let { data: updatedEmployee, error } = await supabaseSecret
+              .from("employees")
               .update({
-                google_id: profile.id,
-                profile_picture_url: profile.photos[0].value,
+                google_id: encryptedProfileID,
+                profile_picture_url: encryptedPhoto,
               })
-              .eq('email', profile.emails[0].value)
-              .select('*')
+              .eq("email", encryptedEmail)
+              .select("*")
               .single();
 
             if (error) throw error;
@@ -57,19 +61,24 @@ passport.use(
             return done(null, updatedEmployee);
           } else {
             // Insert a new employee into the database
-            let { data: newEntry, error } = await supabase
-              .from('employees')
+            let { data: newEntry, error } = await supabaseSecret
+              .from("employees")
               .insert([newEmployee])
-              .select('*')
+              .select("*")
               .single();
 
-            if (error) throw error;
+            if (error) {
+              console.log(
+                "trouble inserting new employee from oauthController"
+              );
+              throw error;
+            }
 
             return done(null, newEntry);
           }
         }
       } catch (err) {
-        console.error('Error during OAuth process:', err);
+        console.error("Error during OAuth process:", err);
         return done(err, null);
       }
     }
@@ -84,17 +93,20 @@ passport.serializeUser((employee, done) => {
 // Deserialize the employee from the session using the ID
 passport.deserializeUser(async (id, done) => {
   try {
-    let { data: employee, error } = await supabase
-      .from('employees')
-      .select('*')
-      .eq('employee_id', id)
+    let { data: employee, error } = await supabaseSecret
+      .from("employees")
+      .select("*")
+      .eq("employee_id", id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.log("oauthController deserialize error");
+      throw error;
+    }
 
     done(null, employee);
   } catch (err) {
-    console.error('Error during deserialization:', err);
+    console.error("Error during deserialization:", err);
     done(err, null);
   }
 });

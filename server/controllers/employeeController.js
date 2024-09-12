@@ -1,4 +1,4 @@
-const supabase = require('../../database/dbConfig');
+const { supabasePublic, supabaseSecret } = require('../../database/dbConfig')
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
@@ -6,15 +6,15 @@ const transporter = require('../config/nodemailerConfig');
 const fieldMapping = require('../config/fieldMapping');
 const { processPassport } = require('../services/ocrService');
 const { processPdf } = require('../services/pdfService');
+const { encryptData, decryptData } = require('../cryptofile')
+
 
 const employeeController = {
   getEmployeeInfo: async (req, res, next) => {
-    const { firstName, lastName, email } = req.body;
-    console.log('req.params', req.params);
     const { employee_id } = req.params;
-
+    console.log(employee_id)
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseSecret
       .from('employees')
       .select('*')  // Replace '*' with specific column names if needed
       .eq('employee_id', employee_id);  // Filter by employee_id
@@ -32,7 +32,22 @@ const employeeController = {
           message: { err: 'Employee not found. Please try again.' },
         });
       } else {
-        const employee = data[0];
+        const { first_name, last_name, dob, email, country } = data[0];
+        const [ decryptedFirstName, decryptedLastName, decryptedDOB, decryptedEmail, decryptedCountry ] = await Promise.all([
+          decryptData(first_name),
+          decryptData(last_name),
+          decryptData(dob),
+          decryptData(email),
+          decryptData(country),
+        ]);
+        const employee = {
+          first_name: decryptedFirstName,
+          last_name: decryptedLastName,
+          dob: decryptedDOB,
+          email: decryptedEmail,
+          country: decryptedCountry,
+        }
+        console.log("employee data: ", employee)
         res.locals.employee = employee;
         return next();
       }
@@ -46,7 +61,7 @@ const employeeController = {
 
   getAllEmployees: async (_, res, next) => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseSecret
         .from('employees')
         .select('');
 
@@ -56,7 +71,37 @@ const employeeController = {
           message: { err: 'Error fetching employees. See server log for details.' },
         });
       } else {
-        res.locals.employeeList = data;
+          console.log("data: ", data);
+        const decryptedEmployees = await Promise.all(
+          data.map(async (employee) => {
+            const { employee_id, first_name, last_name, dob, email, country } = employee;
+
+            const [
+              decryptedFirstName,
+              decryptedLastName,
+              decryptedDOB,
+              decryptedEmail,
+              decryptedCountry
+            ] = await Promise.all([
+              decryptData(first_name),
+              decryptData(last_name),
+              decryptData(dob),
+              decryptData(email),
+              decryptData(country),
+            ]);
+        
+            return {
+              employee_id,
+              first_name: decryptedFirstName,
+              last_name: decryptedLastName,
+              dob: decryptedDOB,
+              email: decryptedEmail,
+              country: decryptedCountry,
+            };
+          })
+        );
+        
+        res.locals.employeeList = decryptedEmployees;
         return next();
       }
     } catch (err) {
@@ -68,13 +113,13 @@ const employeeController = {
   },
 
   addEmployee: async (req, res, next) => {
-    const { firstName, lastName, DOB, email, country } = req.body;
+    const { first_name, last_name, dob, email, country } = req.body;
     let empId = null;
     console.log('addEmployee', req.body);
     try {
       while (empId === null) {
         const tempId = crypto.randomBytes(16).toString('hex');
-        const { data, error } = await supabase.from('employees').select().eq('employee_id', tempId);
+        const { data, error } = await supabaseSecret.from('employees').select().eq('employee_id', tempId);
         if (error) {
           return next({
             log: `Error in employeeController.addEmployee middleware. ERR: ${error}`,
@@ -83,24 +128,39 @@ const employeeController = {
         }
         if (data.length === 0) empId = tempId;
       }
+      console.log("ID: ", empId);
+      const [
+        encryptedFirstName,
+        encryptedLastName,
+        encryptedDOB,
+        encryptedEmail,
+        encryptedCountry
+      ] = await Promise.all([
+        encryptData(first_name),
+        encryptData(last_name),
+        encryptData(dob),
+        encryptData(email),
+        encryptData(country),
+      ]);
 
-      const { error } = await supabase.from('employees').insert({
+
+      const { error } = await supabaseSecret.from('employees').insert({
         employee_id: empId,
-        first_name: firstName,
-        last_name: lastName,
-        dob: DOB,
-        email: email,
-        country: country,
+        first_name: encryptedFirstName,
+        last_name: encryptedLastName,
+        dob: encryptedDOB,
+        email: encryptedEmail,
+        country: encryptedCountry,
       });
 
       if (error) {
         return next({
-          log: `Error in addEmployee middleware. ERR: ${error}`,
+          log: `Error in addEmployee middleware. ERR: ${JSON.stringify(error)}`,
           status: 406,
           message: { err: 'Error adding employee.' },
         });
       } else {
-        res.locals.newEmployeeName = `${firstName} ${lastName}`;
+        res.locals.newEmployeeName = `${first_name} ${last_name}`;
         return next();
       }
     } catch (err) {
@@ -187,5 +247,7 @@ const employeeController = {
     }
   },
 };
+
+
 
 module.exports = employeeController;
