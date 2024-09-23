@@ -10,6 +10,7 @@ const http = require("http");
 
 const employeeRouter = require('./routers/employeeRouter');
 const uploadRouter = require('./routers/uploadRouter'); 
+const documentRouter = require('./routers/documentRouter');
 
 const app = express();
 const PORT = process.env.PORT || 5050;
@@ -38,6 +39,8 @@ app.use('/employee', employeeRouter);
 
 //upload routes
 app.use('/upload', uploadRouter);
+
+app.use('/document', documentRouter);
 
 //error handling
 app.use((err, req, res, next) => {
