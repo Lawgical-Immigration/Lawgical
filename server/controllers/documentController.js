@@ -9,7 +9,7 @@ const projectId = process.env.PROJECT_ID;
 const location = process.env.LOCATION;
 const payStubProcessorId = process.env.PAYSTUB_PROCESSOR;
 
-const jsonFieldMapping = fs.readFileSync(path.resolve(__dirname, '../utils/fieldMapping.json'));
+const jsonFieldMapping = fs.readFileSync(path.resolve(__dirname, '../i-129/fieldMapping.json'));
 const fieldMap = JSON.parse(jsonFieldMapping);
 
 
