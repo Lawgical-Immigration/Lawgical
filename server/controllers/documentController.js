@@ -9,6 +9,9 @@ const projectId = process.env.PROJECT_ID;
 const location = process.env.LOCATION;
 const payStubProcessorId = process.env.PAYSTUB_PROCESSOR;
 
+const jsonFieldMapping = fs.readFileSync(path.resolve(__dirname, '../utils/fieldMapping.json'));
+const fieldMap = JSON.parse(jsonFieldMapping);
+
 
 const documentController = {
   parseDocument: async(req, res, next) => {
@@ -59,20 +62,33 @@ const documentController = {
 
   fillDocument: async(req, res, next) => {
 
-    const i129 = fs.readFileSync(path.join(__dirname, '../../i-129-unlocked.pdf'));
+    const i129 = fs.readFileSync(path.join(__dirname, '../../Xfa_i-129-unlocked.pdf'));
 
     try {
       const pdfDoc = await PDFDocument.load(i129);
       const form = pdfDoc.getForm();
-      const fields = form.getFields()
 
-      fields.forEach(field => {
-        const type = field.constructor.name;
-        const name = field.getName();
-        const fieldName = form.getField(name);
+      const payStubData = res.locals.payStub;
 
-        console.log('filedName: ', fieldName, 'field: ', name, 'type: ', type);
+      payStubData.forEach((data, fieldName) => {
+        if (fieldName == 'company_zipcode') {
+          const zipCode = data.match(/^\d{5}/);
+          data = zipCode[0];
+        }
+
+        let field;
+
+        if(fieldMap.paystub[String(fieldName)]) {
+          field = form.getTextField(fieldMap.paystub[String(fieldName)]);
+        }
+        if(field) field.setText(data);
       });
+
+      const newPdf = await pdfDoc.save();
+      const firstName = payStubData.get('employee_first_name');
+      const lastName = payStubData.get('employee_last_name');
+
+      fs.writeFileSync(path.resolve(`./${firstName}_${lastName}_i129.pdf`), newPdf);
 
       return next();
 

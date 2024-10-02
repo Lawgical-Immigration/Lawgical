@@ -1,0 +1,15 @@
+{
+  "paystub": {
+    "company_name": "form1[0].#subform[0].Line3_CompanyorOrgName[0]",
+    "company_street_address": "form1[0].#subform[0].Line7b_StreetNumberName[0]",
+    "company_apt": "form1[0].#subform[0].Line3_Unit[1]",
+    "company_ste": "form1[0].#subform[0].Line3_Unit[0]",
+    "company_fl": "form1[0].#subform[0].Line3_Unit[2]",
+    "company_city": "form1[0].#subform[0].Line_CityTown[0]",
+
+    "company_province": "form1[0].#subform[0].P1_Line3_Province[0]",
+    "company_zipcode": "form1[0].#subform[0].P1_Line3_ZipCode[0]",
+    "employee_first_name": "form1[0].#subform[1].Part3_Line2_GivenName[0]",
+    "employee_last_name": "form1[0].#subform[1].Part3_Line2_FamilyName[0]"
+  }
+}

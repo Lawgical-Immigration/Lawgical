@@ -9,7 +9,7 @@ const upload = multer();
 const { parseDocument, fillDocument } = require('../controllers/documentController')
 
 
-router.post('/:employee_id', upload.single('paystub'),  fillDocument, (req, res) => {
+router.post('/:employee_id', upload.single('paystub'), parseDocument, fillDocument, (req, res) => {
   return res.sendStatus(201);
 })
 
