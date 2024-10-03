@@ -62,7 +62,7 @@ const documentController = {
 
   fillDocument: async(req, res, next) => {
 
-    const i129 = fs.readFileSync(path.join(__dirname, '../i-129/Xfa_i-129-unlocked.pdf'));
+    const i129 = fs.readFileSync(path.join(__dirname, '../i-129-sample/Xfa_i-129-unlocked.pdf'));
 
     try {
       const pdfDoc = await PDFDocument.load(i129);
@@ -71,7 +71,7 @@ const documentController = {
       const payStubData = res.locals.payStub;
 
       payStubData.forEach((data, fieldName) => {
-        if (fieldName === 'company_zipcode') {
+        if (fieldName.toLowerCase().includes('zipcode')) {
           const zipCode = data.match(/^\d{5}/);
           data = zipCode[0];
         }
@@ -88,7 +88,7 @@ const documentController = {
       const firstName = payStubData.get('employee_first_name');
       const lastName = payStubData.get('employee_last_name');
 
-      fs.writeFileSync(path.resolve(__dirname, `../i-129/${firstName}_${lastName}_i129.pdf`), newPdf);
+      fs.writeFileSync(path.resolve(__dirname, `../i-129-sample/${firstName}_${lastName}_i129.pdf`), newPdf);
 
       return next();
 
