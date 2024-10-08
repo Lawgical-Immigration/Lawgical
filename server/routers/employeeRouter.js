@@ -10,6 +10,7 @@ const {
   getEmployeeInfo
 } = require('../controllers/employeeController');
 
+
 //get all employees
 router.get('/', getAllEmployees, (req, res) => {
   return res.status(200).json(res.locals.employeeList);
@@ -30,9 +31,21 @@ router.post('/:employee_id', upload.single('file'), getEmployeeInfo, uploadFile,
   res.status(200).send('File uploaded, processed, and email sent: ' + res.locals.infoResponse);
 });
 
-//get a specific employees information
+
 router.get('/:employee_id', getEmployeeInfo, (req, res) => {
-return res.status(200).json(res.locals.employee);
+  console.log('Employee route registered');
+
+  if (!res.locals.employee) {
+    return res.status(404).json({ error: 'Employee not found' });
+  }
+  return res.status(200).json(res.locals.employee);
+});
+
+router.get('/', getEmployeeInfo, (req, res) => {
+  if (!res.locals.employee) {
+    return res.status(404).json({ error: 'Employee not found' });
+  }
+  return res.status(200).json(res.locals.employee);
 });
 
 module.exports = router;
